@@ -1,0 +1,71 @@
+HAS
+---
+
+'ABABAABAB', 'ABBBAABAB', 'ABCBAABAB', 'ABEANTREE', 'AKOANADAY', 'AKOANADAZ', 'ALOAFADAY', 'AMOMENTUM', 'ARTHEOUSY', 'BABAABCBA', 'ELUEPEFEZ', 'OMOMOMTOM', 'PIPIEPIPE', 'PIPIEPIPI', 'PIPIFPIPI', 'PIPIPPIPI', 'POPOPPOPO', 'UKUUNUDUY', 'YADANAOKA',
+
+profiles:
+'cvcvccvcv'
+'cvcvcvvcv'
+'cvcvvcvcv'
+'vcccvvcvc'
+'vcccvvvcc'
+'vcvcvccvc'
+'vcvcvvcvc'
+'vcvvcccvv'
+'vcvvcvcvc'
+
+NOT
+---
+
+'AAAAAAAAA', 'AAAAAAAAB', 'AAAABAAAA', 'ABABABABA', 'ABACDCABA', 'ABACDEABA', 'ABBBAABBB', 'ABCABCABC', 'ABCBCACAB', 'ABCBCACCC', 'ABCDEFGHI', 'AKOANADAU', 'ASHEALTHY', 'BAAAAAAAA', 'BLPBOBEBZ', 'BLUETOOOT', 'BLUETOOTH', 'CDCDCCDCD', 'EEEFFFGGG', 'ISHEALTHY', 'KAOANADAU', 'KOANADAYA', 'KUUNUDUYU', 'NAAAAOYKD', 'PIPIPIPIP', 'QRQRQRQRQ', 'THEAROUSY', 'TOMORROWS', 'UMMMMMMMM',
+
+profiles:
+'ccccccccc'
+'ccccvcvcc'
+'ccvvcvvcc'
+'ccvvcvvvc'
+'cvcvccvcc'
+'cvcvcvcvc'
+'cvvcvcvcv'
+'cvvvcvcvv'
+'cvvvvvccc'
+'cvvvvvvvv'
+'vcccccccc'
+'vccccvccc'
+'vccccvcvc'
+'vcccvcccv'
+'vcccvvccc'
+'vccvccvcc'
+'vccvvcccc'
+'vcvcccvcv'
+'vcvccvvcv'
+'vcvcvcvcv'
+'vcvvcvcvv'
+'vvvcccccc'
+'vvvvcvvvv'
+'vvvvvvvvc'
+'vvvvvvvvv'
+
+=======================
+
+Have 4/5 vowels:
+
+HAS			NOT
+---------------------
+cvcvccvcv	ccvvcvvcc
+cvcvcvvcv	ccvvcvvvc
+cvcvvcvcv	cvcvcvcvc
+vcccvvcvc	cvvcvcvcv
+vcvcvccvc	cvvvvvccc
+vcvcvvcvc	vcvcccvcv
+vcvvcccvv	vcvccvvcv
+vcvvcvcvc	vcvcvcvcv
+vcccvvvcc
+
+
+HAS profiles and all of their reverses:
+'ccvvvcccv', 'cvccvcvcv', 'cvcvccvcv', 'cvcvcvvcv', 'cvcvvcccv', 'cvcvvcvcv', 'vcccvvcvc', 'vcccvvvcc', 'vcvccvcvc', 'vcvcvccvc', 'vcvcvvcvc', 'vcvvcccvv', 'vcvvcvcvc', 'vvcccvvcv'
+
+
+
+

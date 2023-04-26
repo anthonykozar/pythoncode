@@ -1,0 +1,414 @@
+THROWBACK All of Your Number Sequences
+======================================
+
+I have been investigating a procedure for rearranging the natural numbers called
+"THROWBACK".  This procedure was described in the article "Coding Fun:
+Rearranging All The Numbers", published in Popular Computing #55, Oct. 1977,
+Vol. 5, No. 10 (1).  A partial copy of the article is available from
+<https://oeis.org/A155167/a155167.pdf>.
+
+Here is the THROWBACK procedure: Start with the infinite sequence of natural
+numbers beginning with 3, that is 3, 4, 5, 6, 7, 8, ...  The first number in the
+sequence at any step of the procedure is called the "leader".  At each step, the
+leader is moved back in the sequence the number of places equal to its value. 
+So, in the first step, 3 is moved back 3 places giving a new sequence 4, 5, 6,
+3, 7, 8, ...  (See listing 1 for the results of the first 26 steps).  This
+simple procedure turns out to produce a wealth of interesting number sequences,
+patterns, and questions.
+
+For example, one can ask whether every number eventually becomes the leader. 
+The Popular Computing article claims that the answer is yes and asks for the
+sequence of numbers giving the first step at which each number becomes the
+leader.  (I will call this the "first indices sequence").  This sequence begins
+1, 2, 3, 5, 7, 10, 14, 19, 26 and — as noted by N. J. A. Sloane — appears to
+match sequence A155167 <https://oeis.org/A155167> in the Online Encyclopedia of
+Integer Sequences. (2)
+
+Listing 1.  The first 26 steps of THROWBACK
+
+        Step    Sequence after step N
+        ----    ---------------------
+        0       3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ...
+        1       4, 5, 6, 3, 7, 8, 9, 10, 11, 12, 13, 14, 15, ...
+        2       5, 6, 3, 7, 4, 8, 9, 10, 11, 12, 13, 14, 15, ...
+        3       6, 3, 7, 4, 8, 5, 9, 10, 11, 12, 13, 14, 15, ...
+        4       3, 7, 4, 8, 5, 9, 6, 10, 11, 12, 13, 14, 15, ...
+        5       7, 4, 8, 3, 5, 9, 6, 10, 11, 12, 13, 14, 15, ...
+        6       4, 8, 3, 5, 9, 6, 10, 7, 11, 12, 13, 14, 15, ...
+        7       8, 3, 5, 9, 4, 6, 10, 7, 11, 12, 13, 14, 15, ...
+        8       3, 5, 9, 4, 6, 10, 7, 11, 8, 12, 13, 14, 15, ...
+        9       5, 9, 4, 3, 6, 10, 7, 11, 8, 12, 13, 14, 15, ...
+        10      9, 4, 3, 6, 10, 5, 7, 11, 8, 12, 13, 14, 15, ...
+        11      4, 3, 6, 10, 5, 7, 11, 8, 12, 9, 13, 14, 15, ...
+        12      3, 6, 10, 5, 4, 7, 11, 8, 12, 9, 13, 14, 15, ...
+        13      6, 10, 5, 3, 4, 7, 11, 8, 12, 9, 13, 14, 15, ...
+        14      10, 5, 3, 4, 7, 11, 6, 8, 12, 9, 13, 14, 15, ...
+        15      5, 3, 4, 7, 11, 6, 8, 12, 9, 13, 10, 14, 15, ...
+        16      3, 4, 7, 11, 6, 5, 8, 12, 9, 13, 10, 14, 15, ...
+        17      4, 7, 11, 3, 6, 5, 8, 12, 9, 13, 10, 14, 15, ...
+        18      7, 11, 3, 6, 4, 5, 8, 12, 9, 13, 10, 14, 15, ...
+        19      11, 3, 6, 4, 5, 8, 12, 7, 9, 13, 10, 14, 15, ...
+        20      3, 6, 4, 5, 8, 12, 7, 9, 13, 10, 14, 11, 15, ...
+        21      6, 4, 5, 3, 8, 12, 7, 9, 13, 10, 14, 11, 15, ...
+        22      4, 5, 3, 8, 12, 7, 6, 9, 13, 10, 14, 11, 15, ...
+        23      5, 3, 8, 12, 4, 7, 6, 9, 13, 10, 14, 11, 15, ...
+        24      3, 8, 12, 4, 7, 5, 6, 9, 13, 10, 14, 11, 15, ...
+        25      8, 12, 4, 3, 7, 5, 6, 9, 13, 10, 14, 11, 15, ...
+        26      12, 4, 3, 7, 5, 6, 9, 13, 8, 10, 14, 11, 15, ...
+
+Note:  All of the Python code that I used in my investigations is available as a
+gist on GitHub: THROWBACK code.
+<https://gist.github.com/anthonykozar/f9dda3ec18fbee84ada22af93d965665>  It is
+intended to be used mostly from the Python interactive prompt.
+
+
+The Leader Sequence
+-------------------
+
+The first sequence that I want to look at is the sequence of leaders at each
+step.  Here are the first 200 values of the leader sequence:
+
+        3, 4, 5, 6, 3, 7, 4, 8, 3, 5, 9, 4, 3, 6, 10, 5, 3, 4, 7, 11, 3, 6, 4,
+        5, 3, 8, 12, 4, 3, 7, 5, 6, 3, 4, 9, 13, 3, 5, 4, 8, 3, 6, 7, 4, 3, 5,
+        10, 14, 3, 4, 6, 5, 3, 9, 4, 7, 3, 8, 5, 4, 3, 6, 11, 15, 3, 4, 5, 7, 3,
+        6, 4, 10, 3, 5, 8, 4, 3, 9, 6, 5, 3, 4, 7, 12, 3, 16, 4, 5, 3, 6, 8, 4,
+        3, 7, 5, 11, 3, 4, 6, 9, 3, 5, 4, 10, 3, 7, 6, 4, 3, 5, 8, 13, 3, 4, 17,
+        5, 3, 6, 4, 7, 3, 9, 5, 4, 3, 8, 6, 12, 3, 4, 5, 7, 3, 10, 4, 6, 3, 5,
+        11, 4, 3, 8, 7, 5, 3, 4, 6, 9, 3, 14, 4, 5, 3, 18, 6, 4, 3, 7, 5, 8, 3,
+        4, 10, 6, 3, 5, 4, 9, 3, 7, 13, 4, 3, 5, 6, 8, 3, 4, 11, 5, 3, 7, 4, 6,
+        3, 12, 5, 4, 3, 9, 8, 6, 3, 4, 5, 7, 3, 10, 4, 15, ...
+
+The leader sequence does not appear directly in the OEIS but the Superseeker
+server <https://oeis.org/ol.html> at OEIS found connections to some other known
+sequences.  If 2 is subtracted from every term of the leader sequence then the
+result appears to match sequence A087165 <oeis.org/A087165> which is defined as
+"a(n) = 1 when n ≡ 1 (mod 4), otherwise a(n) = a(n - ceiling(n/4)) + 1".  The
+starting index for sequence A087165 is 1 whereas I am using 0 as the starting
+index for the leader sequence.  So, the precise relationship is leader(n) - 2 =
+a(n+1).  I have verified this relationship for the first 10,000,000 terms of
+each sequence.
+
+By definition, every fourth term of sequence A087165 is 1.  Correspondingly,
+every fourth term of the leader sequence is 3.  This is fairly easy to prove
+since whenever 3 is the leader it is moved back to the fourth position and the
+three terms in front of it must all be larger than 3.  Therefore, over the next
+three steps, those terms are moved back further in the sequence than the 3 and
+the 3 advances one position towards the front on each step so that on the fourth
+step it is again the leader.  Another interesting property that the 3's in the
+leader sequence should share with the 1's in sequence A087165 is that if every 3
+is removed then the result should be a sequence with every term 1 greater than
+the same term of the leader sequence.
+
+        3, 4, 5, 6, 3, 7, 4, 8, 3, 5, 9,  4, 3, 6, 10, 5, 3, 4, 7, 11, 3, 6, ...        
+        
+        4, 5, 6, 7, 4, 8, 5, 9, 4, 6, 10, 5, 4, 7, 11, 6, 4, 5, 8, 12, 4, 7, ...
+
+The OEIS notes that the "indices of records" for sequence A087165, that is the
+locations in the sequence at which a new number greater than all previous terms
+appears, are the terms of sequence A087192 <https://oeis.org/A087192>.  Since
+our "first indices sequence" for THROWBACK also gives the indices of new records
+in the leader sequence, it is not surprising that sequence A155167 appears to be
+related to sequence A087192.  This (conjectured) relationship, which has not
+been recorded by OEIS contributors yet, is given by A155167(n) + 1 =
+A087192(n+1).
+
+
+The N-indices Sequences
+-----------------------
+
+Each of the other values in the leader sequence also appears to occur an
+infinite number of times and the intervals at which they occur show some
+fascinating patterns.  I will define the "N-indices sequence" as the sequence of
+indices at which the value N occurs in the leader sequence.  E.g. The 3-indices
+sequence is 0, 4, 8, 12, ...  Listing 2 gives the beginning of the N-indices
+sequences for N = 3 to 10.
+
+Listing 2.  The N-indices sequences for N = 3 to 10
+
+        N       Indices at which N occurs
+        -       -------------------------
+        3       0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, ...
+        4       1, 6, 11, 17, 22, 27, 33, 38, 43, 49, 54, 59, 65, 70, 75, ...
+        5       2, 9, 15, 23, 30, 37, 45, 51, 58, 66, 73, 79, 87, 94, 101, ...
+        6       3, 13, 21, 31, 41, 50, 61, 69, 78, 89, 98, 106, 117, 126, 135, ...
+        7       5, 18, 29, 42, 55, 67, 82, 93, 105, 119, 131, 142, 157, 169, 181, ...
+        8       7, 25, 39, 57, 74, 90, 110, 125, 141, 159, 175, 190, 210, 226, 242, ...
+        9       10, 34, 53, 77, 99, 121, 147, 167, 189, 213, 234, 254, 281, 302, 323, ...
+        10      14, 46, 71, 103, 133, 162, 197, 223, 253, 285, 313, 339, 375, 403, 431, ...
+
+Taking the differences between successive values in each of the N-indices
+sequences gives the intervals at which the value N occurs.  For N > 3, these
+intervals are not constant as they are for N = 3, but the values of each
+sequence of intervals appear to be cyclic (i.e. periodic starting with the first
+term).  (See listing 3).  The amazing thing is that the period for the N-indices
+differences appears to be 3^(N-3).  I have confirmed these patterns for the
+first 1,000,000 terms of the leader sequence.
+
+Listing 3.  First differences of the N-indices sequences for N = 3 to 10
+
+        N       Period  Intervals at which N occurs
+        -       ------  ---------------------------
+        3       1       4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, ...
+        4       3       5, 5, 6, 5, 5, 6, 5, 5, 6, 5, 5, 6, 5, 5, 6, 5, 5, 6, ...
+        5       9       7, 6, 8, 7, 7, 8, 6, 7, 8, 7, 6, 8, 7, 7, 8, 6, 7, 8, ...
+        6       27      10, 8, 10, 10, 9, 11, 8, 9, 11, 9, 8, 11, 9, 9, 11, 8, 9, 11, ...
+        7       81      13, 11, 13, 13, 12, 15, 11, 12, 14, 12, 11, 15, 12, 12, 14, 11, 12, 15, ...
+        8       243     18, 14, 18, 17, 16, 20, 15, 16, 18, 16, 15, 20, 16, 16, 19, 14, 16, 20, ...
+        9       729     24, 19, 24, 22, 22, 26, 20, 22, 24, 21, 20, 27, 21, 21, 26, 18, 22, 26, ...
+        10      2187    32, 25, 32, 30, 29, 35, 26, 30, 32, 28, 26, 36, 28, 28, 35, 24, 29, 35, ...
+
+The values within a single period of the sequences with longer periods have some
+interesting patterns too.  Take the simple example of N = 5.  The repeating
+cycle is 7, 6, 8, 7, 7, 8, 6, 7, 8.  Formatting the cycle in 3 columns reveals
+"subperiodic" patterns at the same indices modulo 3:
+
+        7   6   8  
+        7   7   8  
+        6   7   8  
+
+The 6-indices differences have period 27 and there are subperiodic patterns at
+indices modulo 9 and 3.
+
+        10  8   10  10  9   11  8   9   11 
+        9   8   11  9   9   11  8   9   11 
+        9   8   11  9   10  10  8   10  10 
+
+        10  8   10 
+        10  9   11 
+        8   9   11 
+        9   8   11 
+        9   9   11 
+        8   9   11 
+        9   8   11 
+        9   10  10 
+        8   10  10 
+
+In the 9-column list above, the 2nd and 7th columns are all 8's and these are
+the only columns that 8 occurs in.  The 1st, 4th, 5th, and 8th columns contain
+only 9's and 10's and the 3rd, 6th, and 9th columns contain only 10's and 11's
+(also a modulo 3 pattern).  In the 3-column list, the 1st column is the reverse
+of the 2nd.
+
+Similar patterns for higher N-indices differences occur for subperiods of
+various powers of 3.  The cycle of differences for N = 7 is arranged in various
+numbers of columns in listing 4.  When I looked at the specific indices at which
+each value in this cycle occurs and took the differences of those indices (see
+listing 5), I finally noticed a global pattern that explains some of the other
+patterns: one cycle of the differences of each N-indices sequence forms a
+palindrome if the last value is omitted!  I have confirmed this up to N = 13. 
+You can also see that the indices differences within the cycle for some values
+(e.g. 11 and 12 for the 7-indices differences) are made up of smaller
+palindromes.
+
+Listing 4.  The 7-indices differences in 27, 9, and 3 columns
+
+        13 11 13 13 12 15 11 12 14 12 11 15 12 12 14 11 12 15 12 10 15 12 13 14 10 14 13
+        13 11 13 14 12 14 11 12 15 12 10 15 12 12 15 10 12 15 12 11 14 12 14 13 11 13 13
+        14 10 14 13 12 15 10 12 15 12 11 14 12 12 15 11 12 14 12 11 15 12 13 13 11 13 14
+
+        13  11  13  13  12  15  11  12  14 
+        12  11  15  12  12  14  11  12  15 
+        12  10  15  12  13  14  10  14  13 
+        13  11  13  14  12  14  11  12  15 
+        12  10  15  12  12  15  10  12  15 
+        12  11  14  12  14  13  11  13  13 
+        14  10  14  13  12  15  10  12  15 
+        12  11  14  12  12  15  11  12  14 
+        12  11  15  12  13  13  11  13  14 
+
+        13  11  13 
+        13  12  15 
+        11  12  14 
+        12  11  15 
+        12  12  14 
+        11  12  15 
+        12  10  15 
+        12  13  14 
+        10  14  13 
+        13  11  13 
+        14  12  14 
+        11  12  15 
+        12  10  15 
+        12  12  15 
+        10  12  15 
+        12  11  14 
+        12  14  13 
+        11  13  13 
+        14  10  14 
+        13  12  15 
+        10  12  15 
+        12  11  14 
+        12  12  15 
+        11  12  14 
+        12  11  15 
+        12  13  13 
+        11  13  14 
+
+Listing 5.  Indices of values within a single cycle of the 7-indices differences
+
+        Value   Indices
+        -----   -------
+        10      19, 24, 37, 42, 55, 60
+        11      1, 6, 10, 15, 28, 33, 46, 51, 64, 69, 73, 78
+        12      4, 7, 9, 12, 13, 16, 18, 21, 31, 34, 36, 39, 40, 43, 45, 48, 58, 61, 63, 66, 67, 70, 72, 75
+        13      0, 2, 3, 22, 26, 27, 29, 50, 52, 53, 57, 76, 77, 79
+        14      8, 14, 23, 25, 30, 32, 47, 49, 54, 56, 65, 71, 80
+        15      5, 11, 17, 20, 35, 38, 41, 44, 59, 62, 68, 74
+
+        Differences of the above indices:
+
+        Value   Differences
+        -----   -----------
+        10      5, 13, 5, 13, 5
+        11      5, 4, 5, 13, 5, 13, 5, 13, 5, 4, 5
+        12      3, 2, 3, 1, 3, 2, 3, 10, 3, 2, 3, 1, 3, 2, 3, 10, 3, 2, 3, 1, 3, 2, 3
+        13      2, 1, 19, 4, 1, 2, 21, 2, 1, 4, 19, 1, 2
+        14      6, 9, 2, 5, 2, 15, 2, 5, 2, 9, 6, 9
+        15      6, 6, 3, 15, 3, 3, 3, 15, 3, 6, 6
+
+
+Other Starting Sequences
+------------------------
+
+One of the first questions I wondered about when reading the Popular Computing
+article was "why did they omit 1 and 2 from the starting list of numbers?"  Is
+the THROWBACK procedure trivial or broken if 1 and/or 2 are included?  When all
+natural numbers starting with 1 are used, the first indices sequence has a
+simple formula: a(n) = 2^(n-1) - 1.  The leader sequence still has an
+interesting if simpler structure.  Starting with 2, however, turns out to be
+just as rich as 3.
+
+Here are the first 64 values in the leader sequence when the THROWBACK procedure
+is performed on all natural numbers starting with 1:
+
+        1, 2, 1, 3,  1, 2, 1, 4,  1, 2, 1, 3,  1, 2, 1, 5, 
+        1, 2, 1, 3,  1, 2, 1, 4,  1, 2, 1, 3,  1, 2, 1, 6, 
+        1, 2, 1, 3,  1, 2, 1, 4,  1, 2, 1, 3,  1, 2, 1, 5, 
+        1, 2, 1, 3,  1, 2, 1, 4,  1, 2, 1, 3,  1, 2, 1, 7
+
+This is a well-known sequence called the ruler function and can be defined as
+f(n) equals the exponent of the largest power of 2 that divides 2n.  That is,
+f(n) is the largest integer such that 2^f(n) divides 2n.  As stated before, each
+value N first appears in this leader sequence at the (2^(N-1)-1)-th step.  After
+that, each value N appears at a constant interval of 2^N.  The ruler function
+pops up in many different contexts and you can find out more from its entry on
+the OEIS as sequence A001511 <https://oeis.org/A001511>.
+
+If the THROWBACK procedure is performed on all natural numbers starting with 2
+then the first indices sequence begins
+
+        1, 2, 4, 7, 11, 17, 26, 40, 61, 92, 139, 209, 314, 472, 709, 1064, 1597,
+        2396, 3595, 5393, 8090, 12136, 18205, 27308, 40963, 61445, 92168,
+        138253, 207380, 311071, 466607, 699911, 1049867, 1574801, 2362202,
+        3543304, 5314957, 7972436
+
+This appears to match sequence A006999 <https://oeis.org/A006999> (excluding the
+leading 0) on the OEIS described there as "partitioning integers to avoid
+arithmetic progressions of length 3".  It is interesting to note that A006999
+has a comment that "it appears that, aside from the first term, this is the
+(L)-sieve transform of ... {2,5,8,11,...,3n+2....}".  Sequence A155167 — which
+matches the first indices sequence of THROWBACK on 3, 4, 5, ... — is defined as
+the (L)-sieve transform of {3,7,11,15,...,4n-1,...}.  So there appears to be a
+link between the THROWBACK procedure and the (L)-sieve transform of certain
+arithmetic progressions.  (The (L)-sieve transform is defined at
+<https://oeis.org/A152009>).
+
+What do the leader sequence and the N-indices sequences look like when we start
+with 2?  If you guessed that the value 2 occurs every third term than you are
+catching on (see listing 6).  The other N-indices sequences are similar to what
+we saw above but now their differences are nearly palindromic cycles with
+periods that are powers of 2.  Based on further investigations of the THROWBACK
+procedure on the natural numbers starting with higher values, I conjecture that
+the periods of the N-indices sequences for THROWBACK(k, k+1, k+2, ...) are
+k^(N-k).  And I have found potential matches for more of the first indices
+sequences on the OEIS (see listing 7).
+
+Listing 6.  The leader sequence for THROWBACK starting with 2
+
+        2, 3, 4, 2, 5, 3, 2, 6, 4, 2, 3, 7, 2, 5, 3, 2, 4, 8, 2, 3, 6, 2, 4, 3,
+        2, 5, 9, 2, 3, 4, 2, 7, 3, 2, 5, 4, 2, 3, 6, 2, 10, 3, 2, 4, 5, 2, 3, 8,
+        2, 4, 3, 2, 6, 5, 2, 3, 4, 2, 7, 3, 2, 11, 4, 2, 3, 5, 2, 6, 3, 2, 4, 9,
+        2, 3, 5, 2, 4, 3, 2, 7, 6, 2, 3, 4, 2, 5, 3, 2, 8, 4, 2, 3, 12, 2, 5, 3,
+        2, 4, 6, 2, ...
+
+Listing 7.  Sequences that match the first indices for starting numbers 1 to 9
+
+        THROWBACK(1, 2, 3, ...)    See A000225 <https://oeis.org/A000225>.
+        THROWBACK(2, 3, 4, ...)    See A006999 <https://oeis.org/A006999>.
+        THROWBACK(3, 4, 5, ...)    See A155167 <https://oeis.org/A155167>.
+        THROWBACK(4, 5, 6, ...)    See A279075 <https://oeis.org/A279075>.
+        THROWBACK(5, 6, 7, ...)    See A279076 <https://oeis.org/A279076>.
+        THROWBACK(6, 7, 8, ...)    See A279077 <https://oeis.org/A279077>.
+        THROWBACK(7, 8, 9, ...)    See A279078 <https://oeis.org/A279078>.
+        THROWBACK(8, 9, 10, ...)   See A279079 <https://oeis.org/A279079>.
+        THROWBACK(9, 10, 11, ...)  See A279080 <https://oeis.org/A279080>.
+
+All of these sequences also match the (L)-sieve transform of an arithmetic
+progression and an "Adar-based transformation" as mentioned in footnote (2)
+below.
+
+I have only given a cursory look at what happens when the THROWBACK procedure is
+performed on starting sequences that are not just an ascending list of the
+natural numbers.  The behavior seems similar for strictly increasing sequences
+such as all even numbers or the Fibonacci numbers (with only one leading 1).  It
+is more difficult to simulate the procedure very far on sequences with large
+gaps.  One interesting behavior that I noticed is that if you start with a
+reversed or randomized list of the first N natural numbers (3), then THROWBACK
+appears to slowly sort the initial values after which it behaves as described
+above!
+
+
+Next Steps: Proofs?
+-------------------
+
+All of the patterns mentioned above are fascinating but most of them are just
+conjectures at this point.  The proof that I sketched for the 3's occurring
+every fourth term on the original THROWBACK leader sequence is the only proof
+that I have considered so far (although similar reasoning should apply for the
+lowest term in THROWBACK variants).  What remains to be done is to find precise
+formulas or recurrences for the leader and N-indices sequences of THROWBACK with
+different starting sequences and to prove the various properties I've described
+as well as their identification with the OEIS sequences that they appear to
+match.  Also, are there general relationships between the THROWBACK procedure,
+the (L)-sieve transform, and the "Adar-based transformation" to which I have
+alluded?  While I hope to work on answering all of these questions, I don't
+often get enough concentrated time right now to put my recreational math
+explorations on a more rigorous footing.  Perhaps someone reading this will be
+able to fill in the gaps first?
+
+
+Footnotes
+---------
+
+(1) There has been more than one publication with the name "Popular Computing"
+over the years.  The one referenced here was published in the 1970's by Audrey
+and Fred Gruenberger and appears to have featured monthly coding problems.  I
+could not locate any digital archive of it and was only able to find a few
+excerpts online.
+
+(2) I came across sequence A155167 while investigating a new sequence transform
+based on the esoteric programming language Adar
+<https://esolangs.org/wiki/Adar>.  The Adar-based transform provides a new way
+to generate numerous known sequences in the OEIS.  Hopefully, I will find the
+time to say more about that in the future.  Until then, if you interested you
+can wade through this Python code
+<https://gist.github.com/anthonykozar/1205ac9577e576c690d7f5f719d55c9e> that
+gives numerous examples.
+
+(3) You need one or more extra values ("sentinels") at the end of the sequence
+when starting with these kinds of input sequences.
+
+
+NOT USED IN WEBSITE POST
+------------------------
+
+Listing X.  The first 53 terms of the first indices sequence
+
+        1, 2, 3, 5, 7, 10, 14, 19, 26, 35, 47, 63, 85, 114, 153, 205, 274, 366,
+        489, 653, 871, 1162, 1550, 2067, 2757, 3677, 4903, 6538, 8718, 11625,
+        15501, 20669, 27559, 36746, 48995, 65327, 87103, 116138, 154851, 206469,
+        275293, 367058, 489411, 652549, 870066, 1160089, 1546786, 2062382,
+        2749843, 3666458, 4888611, 6518149, 8690866
+
+These terms match the recurrence a(1)=1, a(n)=Floor[(4*a[[n-1]]+3)/3] given in
+the listing for A155167.
