@@ -54,7 +54,7 @@ def tryfactors(num, factors):
             print p,
             num = num / p
     if num != 1:
-        print num
+        print num, '**'
     else: print
 
 def isprime(n): return len(pfactorlist(n)) == 1
