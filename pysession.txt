@@ -1,0 +1,212 @@
+~ $ python2
+Python 2.7.18 (default, Apr  9 2022, 12:24:03)
+[GCC Android (7714059, based on r416183c1) Clang 12.0.8 (https://android.google on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> locals().keys()
+['__builtins__', '__name__', '__doc__', '__package__']
+>>> globals().keys()
+['__builtins__', '__name__', '__doc__', '__package__']
+>>> id = locals()
+>>> id()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'dict' object is not callable
+>>> locals() is globals()
+True
+>>> __builtins__['id']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'module' object has no attribute '__getitem__'
+>>> __builtins__.id
+<built-in function id>
+>>> id = __builtins__.id
+>>> id(globals())
+524894790000
+>>> id(locals())
+524894790000
+>>> import copy
+>>> loc = copy.copy(locals())
+>>> loc
+{'__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'id': <built-in function id>, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}
+>>> glb = copy.copy(globals())
+>>> glb
+{'loc': {'__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'id': <built-in function id>, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}, '__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'id': <built-in function id>, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}
+>>> id(loc)
+524894155984
+>>> id(glb)
+524894156272
+>>> def sqr(x): return x*x
+...
+>>> sqr(4)
+16
+>>> loc
+{'__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'id': <built-in function id>, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}
+>>> glb.keys()
+['loc', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> exec('sqr(5)', glb, loc)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<string>", line 1, in <module>
+NameError: name 'sqr' is not defined
+>>> exec('def cube(x): return x**3', glb, loc)
+>>> glb.keys()
+['loc', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> loc.keys()
+['cube', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> exec('cube(5)', glb, loc)
+>>> eval('cube(5)', glb, loc)
+125
+>>> eval('cube(5)', loc, glb)
+125
+>>> exec('def pc: print cube(9)', glb, loc)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<string>", line 1
+    def pc: print cube(9)
+          ^
+SyntaxError: invalid syntax
+>>> exec('def pc(): print cube(9)', glb, loc)
+>>> loc.keys()
+['pc', 'cube', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> glb.keys()
+['loc', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> pc()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'pc' is not defined
+>>> cube(9)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'cube' is not defined
+>>> sqr(7)
+49
+>>> exec('pc()', glb, loc)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<string>", line 1, in <module>
+  File "<string>", line 1, in pc
+NameError: global name 'cube' is not defined
+>>> exec('pc()', loc)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<string>", line 1, in <module>
+  File "<string>", line 1, in pc
+NameError: global name 'cube' is not defined
+>>> exec('pc()', loc, glb)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<string>", line 1, in <module>
+  File "<string>", line 1, in pc
+NameError: global name 'cube' is not defined
+>>> loc.keys()
+['pc', 'cube', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> locals()
+{'loc': {'pc': <function pc at 0x7a3621e0d0>, 'cube': <function cube at 0x7a3621bf50>, '__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'id': <built-in function id>, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}, '__builtins__': <module '__builtin__' (built-in)>, 'sqr': <function sqr at 0x7a36203dd0>, 'glb': {'loc': {'pc': <function pc at 0x7a3621e0d0>, 'cube': <function cube at 0x7a3621bf50>, '__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'id': <built-in function id>, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}, '__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'id': <built-in function id>, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}, '__doc__': None, '__package__': None, '__name__': '__main__', 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, 'id': <built-in function id>}
+>>> locals().keys()
+['loc', '__builtins__', 'sqr', 'glb', '__doc__', '__package__', '__name__', 'copy', 'id']
+>>> pc()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'pc' is not defined
+>>> cube(8)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'cube' is not defined
+>>> exec('pc()', loc, loc)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<string>", line 1, in <module>
+  File "<string>", line 1, in pc
+NameError: global name 'cube' is not defined
+>>> dir()
+['__builtins__', '__doc__', '__name__', '__package__', 'copy', 'glb', 'id', 'loc', 'sqr']
+>>> exec('dir()', loc, loc)
+>>> exec('print dir()', loc, loc)
+['__builtins__', '__doc__', '__name__', '__package__', 'copy', 'cube', 'id', 'pc']
+>>> exec('def pd(): print dir()', glb, loc)
+>>> loc.keys()
+['pc', 'cube', 'pd', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> glb.keys()
+['loc', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> exec('pd()', glb, loc)
+[]
+>>> exec('pd()', loc, loc)
+[]
+>>> exec('def pg(): print globals().keys()', glb, loc)
+>>> exec('pg()', glb, loc)
+['loc', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> exec('pg()', loc, loc)
+['loc', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> loc.keys()
+['pc', 'cube', 'pg', 'pd', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>> globals.keys()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'builtin_function_or_method' object has no attribute 'keys'
+>>> globals().keys()
+['loc', '__builtins__', 'sqr', 'glb', '__doc__', '__package__', '__name__', 'copy', 'id']
+>>> glb.keys()
+['loc', '__builtins__', '__name__', 'id', 'copy', '__doc__', '__package__']
+>>>
+
+===================================
+
+~ $ python2
+Python 2.7.18 (default, Apr  9 2022, 12:24:03)
+[GCC Android (7714059, based on r416183c1) Clang 12.0.8 (https://android.google on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> type(globals())
+<type 'dict'>
+>>> type(locals())
+<type 'dict'>
+>>> glb = copy.copy(globals())
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'copy' is not defined
+>>> import copy
+>>> glb = copy.copy(globals())
+>>> glb.keys()
+['__builtins__', '__name__', 'copy', '__doc__', '__package__']
+>>> type(glb)
+<type 'dict'>
+>>> exec('def cube(x): return x**3', glb)
+>>> glb.keys()
+['cube', '__builtins__', '__package__', '__name__', 'copy', '__doc__']
+>>> exec('def pc(): print cube(9)', glb)
+>>> exec('pc()', glb)
+729
+>>> pc()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'pc' is not defined
+>>> glb.keys()
+['cube', '__builtins__', '__package__', 'pc', '__name__', 'copy', '__doc__']
+>>> g = copy.copy(globals())
+>>> h = globals().copy()
+>>> g
+{'__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'glb': {'cube': <function cube at 0x7e8286d850>, '__builtins__': <module '__builtin__' (built-in)>, '__package__': None, 'pc': <function pc at 0x7e82885f50>, '__name__': '__main__', 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None}, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}
+>>> h
+{'g': {'__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'glb': {'cube': <function cube at 0x7e8286d850>, '__builtins__': <module '__builtin__' (built-in)>, '__package__': None, 'pc': <function pc at 0x7e82885f50>, '__name__': '__main__', 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None}, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}, '__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'glb': {'cube': <function cube at 0x7e8286d850>, '__builtins__': <module '__builtin__' (built-in)>, '__package__': None, 'pc': <function pc at 0x7e82885f50>, '__name__': '__main__', 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None}, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}
+>>> g == h
+False
+>>> h = g.copy()
+>>> g==h
+True
+>>> g is h
+False
+>>> h[new] = 10
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'new' is not defined
+>>> h['new'] = 10
+>>> g==h
+False
+>>> g
+{'__builtins__': <module '__builtin__' (built-in)>, '__name__': '__main__', 'glb': {'cube': <function cube at 0x7e8286d850>, '__builtins__': <module '__builtin__' (built-in)>, '__package__': None, 'pc': <function pc at 0x7e82885f50>, '__name__': '__main__', 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None}, 'copy': <module 'copy' from '/data/data/com.termux/files/usr/lib/python2.7/copy.pyc'>, '__doc__': None, '__package__': None}
+>>> g.keys()
+['__builtins__', '__name__', 'glb', 'copy', '__doc__', '__package__']
+>>> h.keys()
+['new', '__builtins__', '__name__', 'glb', 'copy', '__doc__', '__package__']
+>>> glb.keys()
+['cube', '__builtins__', '__package__', 'pc', '__name__', 'copy', '__doc__']
+>>>
