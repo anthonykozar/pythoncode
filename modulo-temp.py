@@ -22,37 +22,3 @@ def magicsqr(s):
     prsum(s[2], s[5], s[8])
     prsum(s[0], s[4], s[8])
     prsum(s[2], s[4], s[6])
-
-def partitions(n, maxpartsize = None, debug = False, indent = "", partitions = partitions):
-    if maxpartsize == None or maxpartsize > n:
-        maxpartsize = n
-    if debug: print(indent + "part(%d,%d)" % (n, maxpartsize))
-    totalparts = 0
-    while maxpartsize > 0:
-        nummaxparts = n // maxpartsize
-        if maxpartsize == 1:
-            totalparts += 1
-            if debug: print(indent + "  all 1's: 1")
-        elif maxpartsize == 2:
-            totalparts += nummaxparts
-            if debug: print(indent + "  2..2: %d" % nummaxparts)
-        elif maxpartsize == n:
-            totalparts += 1
-            if debug: print(indent + "  %d: 1" % n)
-        elif nummaxparts == 1:
-            if debug: print(indent + "  %d: " % maxpartsize)
-            totalparts += partitions(n - maxpartsize, None, debug, indent + "  ")
-        else:
-            for k in xrange(1, nummaxparts+1):
-                leftover = n - k*maxpartsize
-                if debug:
-                    s = (str(maxpartsize)+" ")*k
-                    print(indent + "  %s: " % s)
-                if leftover > 0:
-                    totalparts += partitions(leftover, min(leftover,  maxpartsize-1), debug, indent + "  ")
-                else:
-                    totalparts += 1
-                    if debug: print(indent + "    1")
-        maxpartsize -= 1
-    if debug: print(indent + "total: %d" % totalparts)
-    return totalparts
