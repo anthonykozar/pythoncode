@@ -21,21 +21,33 @@
 
 from collections import defaultdict
 
-def MakeSquareSumGraph(n):
-    maxsum = 2*n - 1
-    # make a list of squares up to maxsum
+
+# make a list of squares up to maxval, excluding 1
+def listofsquares(maxval):
     sqrs = []
     i = 2
-    while (i*i) <= maxsum:
+    while (i*i) <= maxval:
         sqrs.append(i*i)
         i += 1
+    return sqrs
 
-    # graph maps vertices to sets of adjacent vertices
+# Our graphs will be dictionaries that maps vertices to sets
+# of adjacent vertices.
+def addedge(graph, a, b):
+    graph[a].add(b)
+    graph[b].add(a)
+
+# Add edges to graph for every b such that a + b is in vals
+def ConnectVertexBySums(graph, a, vals, maxval):
+    for val in vals:
+        b = val - a
+        if b > 0 and b <= maxval and b != a:
+            addedge(graph, a, b)
+
+def MakeSquareSumGraph(n):
+    maxsum = 2*n - 1
+    sqrs = listofsquares(maxsum)
     graph = defaultdict(set)
     for a in xrange(1, n+1):
-        for sq in sqrs:
-            b = sq - a
-            if b > 0 and b <= n and b != a:
-                graph[a].add(b)
-                graph[b].add(a)
+        ConnectVertexBySums(graph, a, sqrs, n)
     return graph
