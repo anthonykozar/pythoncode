@@ -19,6 +19,7 @@
 # If any Hamiltonian paths exist in the graph, they are the
 # solutions for 1 to N.
 
+import sys
 from collections import defaultdict
 
 
@@ -43,6 +44,8 @@ def ConnectVertexBySums(graph, a, vals, maxval):
         b = val - a
         if b > 0 and b <= maxval and b != a:
             addedge(graph, a, b)
+    # make sure that vertex 'a' exists
+    return graph[a]
 
 def MakeSquareSumGraph(n):
     maxsum = 2*n - 1
@@ -51,3 +54,33 @@ def MakeSquareSumGraph(n):
     for a in xrange(1, n+1):
         ConnectVertexBySums(graph, a, sqrs, n)
     return graph
+
+# print a graph in dreadnaut format
+def PrintGraph(graph, out = sys.stdout):
+    pass
+
+# print the adjacency matrix of a graph
+def PrintAdjacencyMatrix(graph, out = sys.stdout):
+    vertices = graph.keys()
+    for v in vertices:
+        for w in vertices:
+            if w in graph[v]:
+                out.write('1 ')
+            else: out.write('0 ')
+        out.write('\n')
+
+def PrintRangeSquareSumGraphs(firstn, lastn, out = sys.stdout):
+    maxsum = 2*lastn - 1
+    sqrs = listofsquares(maxsum)
+    graph = defaultdict(set)
+    # make the graph of size firstn
+    for a in xrange(1, firstn+1):
+        ConnectVertexBySums(graph, a, sqrs, firstn)
+    PrintAdjacencyMatrix(graph, out)
+    out.write('\n')
+    # add one vertex at a time to make the other graphs
+    for a in xrange(firstn+1, lastn+1):
+        ConnectVertexBySums(graph, a, sqrs, a)
+        PrintAdjacencyMatrix(graph, out)
+        out.write('\n')
+
