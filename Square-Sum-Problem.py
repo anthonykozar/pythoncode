@@ -90,6 +90,17 @@ def PrintRangeSquareSumMatrices(firstn, lastn, out = sys.stdout):
         out.write('\n')
 
 # Hamiltonion paths can be found by the gtools' program hamheuristic:
-#     python2 Square-Sum-Problem.py > square-sum-matrices.txt
+#     python2 Square-Sum-Problem.py 3 25 > square-sum-matrices.txt
 #     amtog square-sum-matrices.txt | hamheuristic -p -v
 
+if __name__ == '__main__':
+    argc = len(sys.argv)
+    if argc == 3:
+        first = int(sys.argv[1])
+        last = int(sys.argv[2])
+    elif argc == 2:
+        first = last = int(sys.argv[1])
+    else:
+        sys.exit("Usage: %s first [last]\n" % sys.argv[0])
+    
+    PrintRangeSquareSumMatrices(first, last)
