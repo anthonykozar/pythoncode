@@ -69,18 +69,27 @@ def PrintAdjacencyMatrix(graph, out = sys.stdout):
             else: out.write('0 ')
         out.write('\n')
 
-def PrintRangeSquareSumGraphs(firstn, lastn, out = sys.stdout):
+# print the adjacency matrices of a range of square-sum graphs,
+# prefacing each with the header expected by the amtog program
+# included with the gtools/nauty package.
+def PrintRangeSquareSumMatrices(firstn, lastn, out = sys.stdout):
     maxsum = 2*lastn - 1
     sqrs = listofsquares(maxsum)
     graph = defaultdict(set)
     # make the graph of size firstn
     for a in xrange(1, firstn+1):
         ConnectVertexBySums(graph, a, sqrs, firstn)
+    out.write('n=%d m\n' % firstn)
     PrintAdjacencyMatrix(graph, out)
     out.write('\n')
     # add one vertex at a time to make the other graphs
     for a in xrange(firstn+1, lastn+1):
         ConnectVertexBySums(graph, a, sqrs, a)
+        out.write('n=%d m\n' % a)
         PrintAdjacencyMatrix(graph, out)
         out.write('\n')
+
+# Hamiltonion paths can be found by the gtools' program hamheuristic:
+#     python2 Square-Sum-Problem.py > square-sum-matrices.txt
+#     amtog square-sum-matrices.txt | hamheuristic -p -v
 
