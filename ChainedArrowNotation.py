@@ -4,7 +4,8 @@ from copy import deepcopy
 DEBUG = False
 
 # a -> b -> ... -> c is represented as the list [a, b, ..., c].
-# Parenthesized subchains like a -> ... -> (b -> ... -> c) -> ... -> d are represented as sublists: [a, ..., [b, ..., c], ..., d].
+# Parenthesized subchains like a -> ... -> (b -> ... -> c) -> ... -> d are represented
+# as sublists: [a, ..., [b, ..., c], ..., d].
 # E.g.
 a = [5,[4,3,[2,1]],3,2,[5,8]]
 
@@ -72,10 +73,12 @@ def simplifychain(ch, maxevallen = 2, expand = True, lenlimit = 1000, showsteps 
             # traverse in reverse order
             for i in xrange(len(newch)-1, -1, -1):
                 if type(newch[i]) == list:
-                    newch[i] = simplifynestedchain(newch[i], maxevallen, expand, lenlimit)
+                    res = simplifynestedchain(newch[i], maxevallen, expand, lenlimit)
+                    if res != newch[i]:
+                        newch[i] = res
+                        reevaluate = True
                     if showsteps: printchain(newch, True)
-            reevaluate = True
-            continue
+            if reevaluate: continue
         # expand long chains
         if expand and len(newch) > 3:
             newch = expandchain(newch)
