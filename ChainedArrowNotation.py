@@ -1,7 +1,7 @@
 import sys
 from copy import deepcopy
 
-DEBUG = True
+DEBUG = False
 
 # a -> b -> ... -> c is represented as the list [a, b, ..., c].
 # Parenthesized subchains like a -> ... -> (b -> ... -> c) -> ... -> d are represented as sublists: [a, ..., [b, ..., c], ..., d].
@@ -57,23 +57,26 @@ def expandchain(ch, lenlimit = 1000):
 def simplifychain(ch, maxevallen = 2, expand = True, lenlimit = 1000, showsteps = True):
     if DEBUG:
         print "simplifychain: ",
-        printchain(ch, True)
+    if showsteps or DEBUG: printchain(ch, True)
     newch = deepcopy(ch)
     reevaluate = True
     while reevaluate:
         reevaluate = False
-        if hasnestedchain(newch):
-            # simplify nested chains in reverse order
-            for i in xrange(len(newch)):
-                if type(newch[i]) == list:
-                    newch[i] = simplifynestedchain(newch[i], maxevallen, expand, lenlimit)
-                    if showsteps: printchain(newch, True)
-            reevaluate = True
         # remove trailing 1's
         while newch[-1] == 1:
             newch = newch[:-1]
             reevaluate = True
             if showsteps: printchain(newch, True)
+        # simplify nested chains
+        if hasnestedchain(newch):
+            # traverse in reverse order
+            for i in xrange(len(newch)-1, -1, -1):
+                if type(newch[i]) == list:
+                    newch[i] = simplifynestedchain(newch[i], maxevallen, expand, lenlimit)
+                    if showsteps: printchain(newch, True)
+            reevaluate = True
+            continue
+        # expand long chains
         if expand and len(newch) > 3:
             newch = expandchain(newch)
             reevaluate = True
@@ -112,4 +115,5 @@ def evalchain(ch, exponlimit = 40):
     
     return None
 
-simplifychain([3,3,1,3,2])
+# simplifychain([3,3,1,3,2])
+simplifychain([2,2,2,3])
