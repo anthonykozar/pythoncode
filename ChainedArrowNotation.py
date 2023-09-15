@@ -108,7 +108,7 @@ def evalchain(ch, exponlimit = 40):
         if chlen == 1:
             return ch[0]
         elif chlen == 2:
-            if ch[1] < exponlimit:
+            if ch[1] <= exponlimit:
                 return ch[0]**ch[1]
             else:
                 print "exponent limit exceeded: %d^%d" % (ch[0], ch[1])
@@ -118,5 +118,29 @@ def evalchain(ch, exponlimit = 40):
     
     return None
 
+# Evaluate Knuth's up arrow notation
+# a^(c)b where c is the number of arrows.
+# E.g. 2^(4)3 = 2^^^^3 = 2^^^2^^^2
+def evaluparrows(a, b, c, exponlimit = 40):
+    print "evaluparrows(%d,%d,%d)" % (a,b,c)
+    if a == 1 or b == 0: return 1
+    if b == 1: return a
+    if c == 1:
+        if b <= exponlimit:
+            return a**b
+        else:
+            expr = "%d^%d" % (a, b)
+            print "exponent limit exceeded: " + expr 
+            return expr
+    reps = b
+    for arrows in xrange(c, 1, -1):
+        res = a
+        for i in xrange(reps-1):
+            res = evaluparrows(a, res, arrows-1, exponlimit)
+            print "res = %s" % str(res)
+        reps = res
+    return reps
+
 # simplifychain([3,3,1,3,2])
-simplifychain([2,2,2,3])
+# simplifychain([2,2,2,3])
+evaluparrows(2,2,2)
