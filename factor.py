@@ -90,6 +90,11 @@ def sumdigits(num):
             sum += int(dgt)
     return sum
 
+def digitalroot(num):
+    while num > 9:
+        num = sumdigits(num)
+    return num
+
 def digitproduct(num):
     digits = str(num)
     product = 1
