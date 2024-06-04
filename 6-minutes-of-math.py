@@ -1,3 +1,8 @@
+# Checking & exploring some stuff from the video
+# "6 Minutes of Fascinating Math"
+# https://m.youtube.com/watch?v=XxrywM_NRJ0
+# Oct. 31, 2023
+
 n = 1
 for i in xrange(1, 51):
     n2 = n+i+1
