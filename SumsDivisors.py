@@ -57,7 +57,7 @@ def isabundant(num, divs = None, divisors = divisors):
     return sum(divs) > 2*num
 
 # Pseudoperfect (or semiperfect) numbers are equal to the sum of a subset (possibily all) of their proper divisors.
-def ispseudoperfect(num, divs = None, divisors = divisors):
+def ispseudoperfect(num, divs = None, divisors = divisors, findsublistwithsum = findsublistwithsum):
     if divs == None:
         divs = divisors(num)
     dsum = sum(divs) - n
@@ -66,7 +66,7 @@ def ispseudoperfect(num, divs = None, divisors = divisors):
 
 # Weird numbers are abundant numbers that are not pseudoperfect (i.e. there does NOT exist a subset of their divisors
 # that add up to themselves).
-def isweird(num, divs = None, divisors = divisors):
+def isweird(num, divs = None, divisors = divisors, findsublistwithsum = findsublistwithsum):
     if divs == None:
         divs = divisors(num)
     dsum = sum(divs) - n
