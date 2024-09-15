@@ -1,9 +1,10 @@
 # Sums of Divisors
 #
-# Abundant, pseudoperfect, weird, and practical numbers.
+# Perfect, deficient, abundant, pseudoperfect, weird, and practical numbers.
 #
 # Anthony Kozar
 # circa Nov. 23, 2022
+# Sept. 15, 2024
 
 def divisors(num):
     return [1] + [n for n in xrange(2, num/2+1) if num % n == 0] + [num]
@@ -37,6 +38,39 @@ def findsublistwithsum(nums, targetsum):
                 return None
     print "Warning: findsublistwithsum() reached the end."
     return None
+
+# The following functions return True of False if num is perfect, deficient, abundant, pseudoperfect, or weird, respectively.
+# divs is an optional parameter to pass in the list of divisors of num.
+def isperfect(num, divs = None, divisors = divisors):
+    if divs == None:
+        divs = divisors(num)
+    return sum(divs) == 2*num
+
+def isdeficient(num, divs = None, divisors = divisors):
+    if divs == None:
+        divs = divisors(num)
+    return sum(divs) < 2*num
+
+def isabundant(num, divs = None, divisors = divisors):
+    if divs == None:
+        divs = divisors(num)
+    return sum(divs) > 2*num
+
+# Pseudoperfect (or semiperfect) numbers are equal to the sum of a subset (possibily all) of their proper divisors.
+def ispseudoperfect(num, divs = None, divisors = divisors):
+    if divs == None:
+        divs = divisors(num)
+    dsum = sum(divs) - n
+    if dsum == num: return True
+    else: return dsum > n and findsublistwithsum(divs[0:-1], n)
+
+# Weird numbers are abundant numbers that are not pseudoperfect (i.e. there does NOT exist a subset of their divisors
+# that add up to themselves).
+def isweird(num, divs = None, divisors = divisors):
+    if divs == None:
+        divs = divisors(num)
+    dsum = sum(divs) - n
+    return dsum > n and findsublistwithsum(divs[0:-1], n) == None
 
 
 # "Practical numbers" are positive integers for which all smaller positive integers are equal to a sum of some of its proper divisors.
