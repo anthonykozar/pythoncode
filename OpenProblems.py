@@ -68,7 +68,6 @@ def makeOverlappingRingFamily(numsets, setsize, overlap):
 
 #   return [range(i ,i+setsize) for i in xrange(1, laststarter, setsize-overlap)] + [range(laststarter, numelems+1) + range(1, overlap+1)]
 
-import fractions
 
 # Second problem: the Erdős–Straus conjecture
 # For any integer n > 1, can we find positive integers
@@ -80,37 +79,8 @@ import fractions
 #     would imply a smaller counterexample for one of its factors
 #   - always true if negative a, b, c are allowed
 
-def egyptiansum(denoms, frac = fractions.Fraction):
-    return sum(map(lambda d: frac(1,d), denoms))
-
-def greedy(a, b, frac = fractions.Fraction):
-    r = frac(a,b)
-    denoms = []
-    while r.numerator > 1:
-        d = r.denominator // r.numerator + 1
-        denoms.append(d)
-        r -= frac(1,d)
-    if r.numerator == 1:
-        denoms.append(r.denominator)
-    else:
-        print "r =", r
-    return denoms
-
-def greedy1(a, b):
-    d = b // a + 1
-    print d
-    a = a*d - b
-    b *= d
-    return (a,b)
-
-''' Examples
-for d in xrange(2,21):
-    print "4/%d" % d, greedy(4, d)
-
-for d in xrange(3,41,2):
-    denoms = greedy(4, d)
-    print "4/%d" % d, denoms, egyptiansum(denoms)
-'''
+from SumsDivisors import *
+from EgyptianFractions import *
 
 # Search for abundant numbers for which there exist a subset of their divisors that add up to themselves ("pseudoperfect numbers")
 # and check that those divisors make unit fractions that add up to 1.
