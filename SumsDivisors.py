@@ -60,17 +60,17 @@ def isabundant(num, divs = None, divisors = divisors):
 def ispseudoperfect(num, divs = None, divisors = divisors, findsublistwithsum = findsublistwithsum):
     if divs == None:
         divs = divisors(num)
-    dsum = sum(divs) - n
+    dsum = sum(divs) - num
     if dsum == num: return True
-    else: return dsum > n and findsublistwithsum(divs[0:-1], n)
+    else: return dsum > num and findsublistwithsum(divs[0:-1], num) != None
 
 # Weird numbers are abundant numbers that are not pseudoperfect (i.e. there does NOT exist a subset of their divisors
 # that add up to themselves).
 def isweird(num, divs = None, divisors = divisors, findsublistwithsum = findsublistwithsum):
     if divs == None:
         divs = divisors(num)
-    dsum = sum(divs) - n
-    return dsum > n and findsublistwithsum(divs[0:-1], n) == None
+    dsum = sum(divs) - num
+    return dsum > num and findsublistwithsum(divs[0:-1], num) == None
 
 
 # "Practical numbers" are positive integers for which all smaller positive integers are equal to a sum of some of its proper divisors.
