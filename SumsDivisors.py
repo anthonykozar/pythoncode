@@ -4,7 +4,7 @@
 #
 # Anthony Kozar
 # circa Nov. 23, 2022
-# Sept. 15, 2024
+# Sept. 15 & 19-20, 2024
 
 def divisors(num):
     return [1] + [n for n in xrange(2, num/2+1) if num % n == 0] + [num]
@@ -39,7 +39,7 @@ def findsublistwithsum(nums, targetsum):
     print "Warning: findsublistwithsum() reached the end."
     return None
 
-# The following functions return True of False if num is perfect, deficient, abundant, pseudoperfect, or weird, respectively.
+# The following functions return True or False depending on if num is perfect, deficient, abundant, pseudoperfect, or weird, respectively.
 # divs is an optional parameter to pass in the list of divisors of num.
 def isperfect(num, divs = None, divisors = divisors):
     if divs == None:
@@ -106,3 +106,29 @@ def ispractical(num, divisors = divisors, iscompleteseq = iscompleteseq):
         return iscompleteseq(divisors(num))
     else:
         return False
+
+# Find a practical number that is a multiple of num
+def findpracticalmultiple(num, ispractical = ispractical):
+    foundpracnum = False
+    m = 1
+    while not foundpracnum:
+        pnum = m*num
+        if ispractical(pnum):
+            foundpracnum = True
+        else:
+            m += 1
+    return pnum
+
+'''
+# Find the smallest multiple of each number up to 1000 that is practical
+for n in xrange(2,1001):
+    pn = findpracticalmultiple(n)
+    print n, pn/n, pn
+
+# Practical multiples of prime numbers appear to be strictly non-decreasing!
+from findprimes import findprimes4
+primes = findprimes4(1000, False)
+for n in primes:
+    pn = findpracticalmultiple(n)
+    print n, pn/n, pn
+'''
