@@ -49,4 +49,20 @@ from SumsDivisors import *
 
 # Find an EFR for the rational a/b using a practical number that is a multiple of b
 def usepractical(a, b, frac = fractions.Fraction, findpracticalmultiple = findpracticalmultiple):
-    pass
+    d = findpracticalmultiple(b)
+    divs = divisors(d)
+    numerators = findsublistwithsum(divs, a*(d/b))
+    if numerators:
+        denoms = []
+        for n in numerators:
+            r = frac(n,d)
+            print n, d, r
+            if r.numerator == 1:
+                denoms.append(r.denominator)
+            else:
+                print "r =", r
+        denoms.reverse()
+        return denoms
+    else:
+        print "Warning: findsublistwithsum(divisors(%d),%d) did not return anything in usepractical(%d,%d)." % (d, a*(d/b), a, b)
+        return None
