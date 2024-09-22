@@ -4,6 +4,7 @@
 #
 # Anthony Kozar
 # circa Nov. 23, 2022
+# Sept. 19, 2024
 
 import fractions
 
@@ -43,3 +44,9 @@ for d in xrange(3,41,2):
     denoms = greedy(4, d)
     print "4/%d" % d, denoms, egyptiansum(denoms)
 '''
+
+from SumsDivisors import *
+
+# Find an EFR for the rational a/b using a practical number that is a multiple of b
+def usepractical(a, b, frac = fractions.Fraction, findpracticalmultiple = findpracticalmultiple):
+    pass
