@@ -4,7 +4,7 @@
 #
 # Anthony Kozar
 # circa Nov. 23, 2022
-# Sept. 15 & 19-20, 2024
+# Sept. 15 & 19-21, 2024
 
 def divisors(num):
     return [1] + [n for n in xrange(2, num/2+1) if num % n == 0] + [num]
@@ -131,4 +131,17 @@ primes = findprimes4(1000, False)
 for n in primes:
     pn = findpracticalmultiple(n)
     print n, pn/n, pn
+'''
+
+'''
+from collections import defaultdict
+multipliermap = defaultdict(list)
+for n in xrange(2,1001):
+    pn = findpracticalmultiple(n)
+    multipliermap[pn/n].append(n)
+multipliers = multipliermap.keys()
+multipliers.sort()
+counts = [(m, len(multipliermap[m])) for m in multipliers]
+pracmultipliers = filter(ispractical, multipliers)
+notpracmultipliers = [m for m in multipliers if not ispractical(m)]
 '''
