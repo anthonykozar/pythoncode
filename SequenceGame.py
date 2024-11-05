@@ -71,7 +71,8 @@ def PlaySequence(seq, initiallength):
 
     return False
 
-### These functions define various random sequences
+### Sequence generators ###
+
 def MakeArithmeticSequence(length = 100):
     start = int(random.triangular(-100.0, 100.0))
     stepsign = random.choice([1, -1])
@@ -81,7 +82,33 @@ def MakeArithmeticSequence(length = 100):
     end = start + length*step
     return range(start, end, step)
 
-    
+def MakeXtoNSequence(length = 100):
+    rand = random.random()
+    # 2 <= degree <= 6; favor smaller degrees
+    degree = 2 + int(5.0*rand*rand)
+    print "degree", degree
+    return [n**degree for n in xrange(length)]
+
+def MakePowerSequence(length = 100):
+    rand = random.random()
+    # 2 <= base <= 12; favor smaller degrees
+    base = 2 + int(11.0*rand*rand)
+    powers = [1]
+    cur = 1
+    for i in xrange(1, length):
+        cur *= base
+        powers.append(cur)
+    return powers
+
+### Sequence transforms ###
+
+def ConstantOffset(seq, offset):
+    addoffset = lambda n: n + offset
+    return map(addoffset, seq)
+
+def Reverse(seq):
+    return seq[-1::-1]
+
 PowersOf2 = [2**n for n in range(7)]
 
-PlaySequence(MakeArithmeticSequence(), 3)
+PlaySequence(MakeXtoNSequence(), 3)
