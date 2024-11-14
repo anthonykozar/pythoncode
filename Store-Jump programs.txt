@@ -1,0 +1,39 @@
+[kInputInteger, 5, 3, 0, 3, 0
+ ]
+
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ...]
+[1, 2, 1, 4, 5, 4, 7, 8, 7, 10, ...]
+[1, 2, 1, 4, 5, 4, 7, ...]
+
+[1, fOutAddr, fExitAddr,
+ 4, fOutAddr, fExitAddr,
+ 7, fOutAddr, fExitAddr,
+ 10, fOutAddr, fExitAddr, ...]
+
+# -------------------------
+# Skip over the increment function
+1 incrOut programMain
+# Increment function table
+(2 to 1000, incrOut, incrReturn)
+# Increment return code
+# The increment function will write the return value @3000.
+# Caller should write the address it wants the return value to go in @3001 and the return address in @3002
+@incrOut(3000)
+@incrReturn(3000)
+0 outputAddr returnAddr
+
+@programMain(3003)
+# fix the first jump address in the increment function
+incrReturn 2 programMain+3
+# prepare to read an integer
+afterRead kInputInteger+2 programMain+6
+afterRead+5 kInputInteger+1 kInputInteger
+
+@afterRead
+# call increment function 3 times
+afterRead+11 incrOut+1 afterRead+3
+afterRead+6  incrOut+2 0
+afterRead+ incrOut+1 afterRead+3
+afterRead+ incrOut+2 0
+afterRead+ incrOut+1 afterRead+3
+afterRead+ incrOut+2 0
