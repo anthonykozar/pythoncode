@@ -81,7 +81,12 @@ def MakeArithmeticSequence(length = 100):
     end = start + length*step
     return range(start, end, step)
 
-    
+def fibrecurrence(a1, a2, terms = 20):
+    out=[a1,a2]
+    for i in xrange(2,terms):
+        out.append(out[i-2]+ out[i-1])
+    return out
+
 PowersOf2 = [2**n for n in range(7)]
 
 PlaySequence(MakeArithmeticSequence(), 3)
