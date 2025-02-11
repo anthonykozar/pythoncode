@@ -65,8 +65,8 @@ def notprime(n): return len(pfactorlist(n)) > 1
 def nextprime(num):
     start = num + 1 + num%2  # start with an odd number
     for n in xrange(start, 2*start, 2):
-	if isprime(n):
-	    return n
+        if isprime(n):
+            return n
 
 # Interesting number sequences for factoring
 repunits = [(10**n - 1)/9 for n in xrange(2,25)]
