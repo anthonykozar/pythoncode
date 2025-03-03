@@ -64,6 +64,22 @@ def partitionsrecurrence(n, pentnums = gpent):
         partcounts.append(numparts)
     return partcounts[1:]
 
+# Enumerate the partitions of n with exactly 3 parts
+def p3parts(n):
+    if n < 3: return []
+    p = []
+    imin = (n+2)//3
+    for i in xrange(n-2, imin-1, -1):
+        rmn = n - i
+        jmax = min(rmn-1, i)
+        jmin = (rmn+1)//2
+        for j in xrange(jmax, jmin-1, -1):
+            k = rmn - j
+            print i, j, k
+            p.append((i,j,k))
+    return p
+
+
 ########
 # number of columns to print different modulos of a sequence
 cols = [72, 72, 8, 9, 16, 25, 72, 49, 32, 27, 25, 11, 72, 13, 56, 25, 64, 17, 54, 19, 20]
