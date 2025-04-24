@@ -10,7 +10,7 @@ from numbases import baseconvert
 BASE = 3
 
 def trimzeros(numstr):
-    return numstr # FIXME
+    return numstr.lstrip('0')
 
 def binaryOp1(op, x, y):
     return op[int(x)*BASE + int(y)]
@@ -21,8 +21,8 @@ def binaryOp(op, x, y, width=None, binaryOp1=binaryOp1):
     if width == None:
         autowidth = True
         width = max(len(x), len(y))
-    sx = '0'*(width-len(x)) + x
-    sy = '0'*(width-len(y)) + y
+    sx = x.zfill(width)
+    sy = y.zfill(width)
     res = "".join([binaryOp1(op,sx[i],sy[i]) for i in xrange(width)])
     if autowidth:
         return trimzeros(res)
@@ -46,27 +46,42 @@ def SHIFTL(val, n, width=None):
 #   SELECT(TESTNZ(y, Z(y)), x, 
 #     add(KGS(x,y), SHIFTL(LI_(x,y),1)), 
 #     add(KGS(x,y), SHIFTL(LI_(x,y),1))))
-def add(x, y, width=None):
+def add3(x, y, width=None):
     if y == '0' * len(y):
         return x
     else:
-        return add(KGS(x, y, width),
+        return add3(KGS(x, y, width),
             SHIFTL(LI_(x, y, width), 1, width))
 
-"""
-truecount = 0
-falsecount = 0
-for m in xrange(729):
-    for n in xrange(729):
-        m3 = baseconvert(m, BASE)
-        n3 = baseconvert(n, BASE)
-        r3 = add(m3, n3)
-        r = int(r3, BASE)
-        if r != m+n:
-            print m,n,m3,n3,r3,r
-            falsecount += 1
-        else:
-            truecount += 1
-print "Equal:", truecount, "Not equal:", falsecount
-"""
-print add('2'*27, '1')
+RUNTESTS = 4
+
+def testadd(m, n):
+    m3 = baseconvert(m, BASE)
+    n3 = baseconvert(n, BASE)
+    r3 = add3(m3, n3)
+    r = int(r3, BASE)
+    return (m3, n3, r3, r)
+
+if RUNTESTS & 1:
+    print add3('2'*27, '1')
+    
+if RUNTESTS & 2:
+    truecount = 0
+    falsecount = 0
+    for m in xrange(729):
+        for n in xrange(729):
+            m3, n3, r3, r = testadd(m, n)
+            if r != m+n:
+                print m,n,m3,n3,r3,r
+                falsecount += 1
+            else:
+                truecount += 1
+    print "Equal:", truecount, "Not equal:", falsecount
+
+if RUNTESTS & 4:
+    from random import randrange
+    for i in xrange(20):
+        m = randrange(1, int('1000000', BASE))
+        n = randrange(1, int('1000000', BASE))
+        m3, n3, r3, r = testadd(m, n)
+        print m,n,m3,n3,r3,r, r == m+n
