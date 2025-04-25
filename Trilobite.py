@@ -55,7 +55,7 @@ def binaryOp(op, x, y, width=None, binaryOp1=binaryOp1):
         return res[-width:]
 
 # returns (x+y)%3 for each trit
-def KGS(x, y, width=None, binaryOp=binaryOp):
+def KGU(x, y, width=None, binaryOp=binaryOp):
     return binaryOp("012120201", x, y, width)
 
 # returns floor((x+y)/3) for each trit
@@ -69,13 +69,13 @@ def SHIFTL(val, n, width=None):
 # Check my algorithm for base-3 addition:
 # DEFINE(add, (x,y), 
 #   SELECT(TESTNZ(y, Z(y)), x, 
-#     add(KGS(x,y), SHIFTL(LI_(x,y),1)), 
-#     add(KGS(x,y), SHIFTL(LI_(x,y),1))))
+#     add(KGU(x,y), SHIFTL(LI_(x,y),1)), 
+#     add(KGU(x,y), SHIFTL(LI_(x,y),1))))
 def add3(x, y, width=None):
     if y == '0' * len(y):
         return x
     else:
-        return add3(KGS(x, y, width),
+        return add3(KGU(x, y, width),
             SHIFTL(LI_(x, y, width), 1, width))
 
 RUNTESTS = 4
