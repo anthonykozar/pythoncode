@@ -9,6 +9,31 @@ from numbases import baseconvert
 
 BASE = 3
 
+def createmaps(chars, base = BASE, width = 3, baseconvert = baseconvert):
+    ch2num = {}
+    num2ch = {}
+    for i in xrange(len(chars)):
+        numstr = baseconvert(i, base).zfill(width)
+        ch2num[chars[i]] = numstr
+        num2ch[numstr] = chars[i]
+    return ch2num, num2ch
+
+# make maps between the "operator characters" and base-3 numbers
+OPALPHABET = "_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+OPCHARMAP, OPNUMMAP = createmaps(OPALPHABET)
+
+# Convert a Trilobite name into an operator table
+def name2op(name, OPCHARMAP = OPCHARMAP):
+    numseq = [OPCHARMAP[c] for c in name]
+    return "".join(numseq)[::-1]
+
+# Convert an operator table into a Trilobite operator name
+def op2name(op, width = 3, OPNUMMAP = OPNUMMAP):
+    oprev = op[::-1]
+    numseq = [oprev[i:i+width] for i in xrange(0, len(oprev), width)]
+    charseq = [OPNUMMAP[s] for s in numseq]
+    return "".join(charseq)
+
 def trimzeros(numstr):
     return numstr.lstrip('0')
 
