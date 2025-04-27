@@ -8,7 +8,7 @@ Gapless will be a very simple programming language and CAS (computer algebra sys
 
 Specific goals and features will include:
 
-- a focus on computation with the _elements_ of groups and group rings and exploring simple structural properties such as subgroups, cosets, and conjugacy classes. (i.e. There will not be built-in algorithms for topics like derived series, characters, cohomolgy, etc.)
+- a focus on computation with the _elements_ of groups and group rings and exploring simple structural properties such as subgroups, cosets, and conjugacy classes. (i.e. There will not be built-in algorithms for topics like derived series, characters, cohomology, etc.)
 
 - a syntax as close to common mathematical notations as possible including 
 
@@ -33,10 +33,8 @@ Specific goals and features will include:
 
 ## Colophon
 
-Gapless was specifically conceived on April, 25, 2025 although I had been wishing for an easy-to-use group theory tool for many years.  The name, meaning "without gaps or breaks", is an obvious reference to GAP and implies a desire to do computational group theory without the complexity of GAP.  The name is also somewhat descriptive of the language since group operations can be written with juxtaposition (i.e. "without gaps").
+Gapless was specifically conceived on April, 25, 2025, although I had been wishing for an easy-to-use group theory tool for many years.  The name, meaning "without gaps or breaks", is an obvious reference to GAP and implies a desire to do computational group theory without the complexity of GAP.  The name is also somewhat descriptive of the language since group operations can be written with juxtaposition (i.e. "without gaps").
 
-Anthony Kozar
-
-April 27, 2025
-
+Anthony Kozar<br>
+April 27, 2025<br>
 http://anthonykozar.net/
