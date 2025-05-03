@@ -120,5 +120,7 @@ for i in xrange(len(BASES)-1):
             continue
         sharedsums = sumstuples[b1].intersection(sumstuples[b2])
         if len(sharedsums) > 0 or VERBOSE:
-            print "Intersections of %d and %d: %s" % (b1, b2, str(sharedsums))
+            sortedsums = list(sharedsums)
+            sortedsums.sort()
+            print "Intersections of %d and %d: %s" % (b1, b2, str(sortedsums))
 
