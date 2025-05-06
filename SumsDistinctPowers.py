@@ -121,6 +121,7 @@ print_search_parameters()
 powsb = {}
 for b in BASES:
     powsb[b] = powersof(b, MAXVAL, INCL1)
+    if VERBOSE: print len(powsb[b]), "powers of", b
 
 '''
 sumspairs = {}
@@ -131,8 +132,9 @@ for b in BASES:
 sumstuples = {}
 for b in BASES:
     sumstuples[b] = sumsdistinctNtuples(K, powsb[b])
+    if VERBOSE: print len(sumstuples[b]), "sums of powers of", b
 
-if VERBOSE: print basemap
+if VERBOSE: print "Base map:", basemap
 
 # check for any shared values among the sums of tuples of powers with different bases
 for i in xrange(len(BASES)-1):
