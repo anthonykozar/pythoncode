@@ -14,9 +14,9 @@
 # Anthony Kozar
 # Apr. 30, 2025
 
-# Search parameters to modify
+# Default search parameters
 
-K = 3    # num of powers in each sum
+K = 2    # num of powers in each sum
 VERBOSE = False
 MAXVAL = 10**12
 INCL1 = False
@@ -25,11 +25,34 @@ BASEMAX = 100
 BASES = xrange(BASEMIN, BASEMAX+1)
 basemap = {}
 
-print "Looking for equal sums of %d powers." % K
-print "Checking bases from %d to %d" % (BASEMIN, BASEMAX)
-print "and values of b^n up to", MAXVAL
-if not INCL1: print "not",
-print "including ones (b^0). "
+import argparse
+
+def parse_arguments():
+    global K, VERBOSE, MAXVAL, INCL1, BASEMIN, BASEMAX, BASES
+    
+    parser = argparse.ArgumentParser(description = "Searches for numbers that are the sums of K distinct powers for two different bases.")
+    parser.add_argument("K", type=int, default=K, help="the number of powers in each sum")
+    parser.add_argument("-v", "--verbose", help="display more information about the search", action="store_true")
+    parser.add_argument("-1", "--include1", help="include 1 (b^0) in lists of powers", action="store_true")
+    parser.add_argument("-m", "--maxval", type=int,  default=12, help="generate powers up to 10^MAXVAL")
+    parser.add_argument("-b", "--basemin", type=int, default= BASEMIN, help="smallest base to search")
+    parser.add_argument("-B", "--basemax", type=int, default= BASEMAX, help="largest base to search")
+    
+    args = parser.parse_args()
+    K = args.K
+    VERBOSE = args.verbose
+    INCL1 = args.include1
+    MAXVAL = 10**args.maxval
+    BASEMIN = args.basemin
+    BASEMAX = args.basemax
+    BASES = xrange(BASEMIN, BASEMAX+1)
+
+def print_search_parameters():
+    print "Searching for equal sums of %d powers." % K
+    print "Checking bases from %d to %d" % (BASEMIN, BASEMAX)
+    print "and values of b^n up to", MAXVAL
+    if not INCL1: print "not",
+    print "including ones (b^0)."
 
 # make a set of sums of pairs of distinct elements of arr
 def sumsdistinctpairs(arr):
@@ -91,6 +114,9 @@ def powersof(b, maxval = MAXVAL, inclOne = True):
         dobasemap(bn, b)
         bn *= b
     return pows
+
+parse_arguments()
+print_search_parameters()
 
 powsb = {}
 for b in BASES:
