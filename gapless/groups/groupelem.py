@@ -22,4 +22,16 @@ class GroupElement(object):
     def __init__(self, name, group):
         self.name = name
         self.group = group
+    
+    def __str__(self):
+        return self.name
 
+    def __mul__(self, other):
+        return self.group.doOperation(self, other)
+
+class CyclicGroupElement(GroupElement):
+    def __init__(self, numericval, group):
+        self.val = numericval
+        self.name = str(numericval)
+        self.group = group
+        

@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from groupelem import GroupElement
+from groupelem import CyclicGroupElement
 
 # Group should probably inherit from a Set class (or built-in set?)
 class Group(object):
@@ -28,4 +29,20 @@ class Group(object):
         self.operatorTable = operatorTable
         self.operatorName = operatorSymbol
         self.order = len(self.elemlist)
+    
+    def __str__(self):
+        return self.name
+
+    # default code to perform the group operation on two group elements
+    # using self.operatorTable
+    def doOperation(self, left, right):
+        
+
+class CyclicGroup(Group):
+    def __init__(self, order):
+        #FIXME: name = u'\N{DOUBLE-STRUCK CAPITAL Z}' + '_' + str(order)
+        name = 'Z_' + str(order)
+        elems = [CyclicGroupElement(i, self) for i in xrange(order)]
+        op = [[elems[(a+b)%order] for b in xrange(order)] for a in xrange(order)]
+        Group.__init__(self, name, elems, op, '+')
 

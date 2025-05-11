@@ -18,7 +18,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-__all__ = ["Group", "GroupElement"]
+__all__ = ["Group", "CyclicGroup", "GroupElement", "CyclicGroupElement"]
 
 from .group import Group
-from .groupelem import GroupElement
+from .group import CyclicGroup
+from .groupelem import GroupElement, CyclicGroupElement
