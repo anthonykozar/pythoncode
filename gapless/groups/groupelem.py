@@ -19,6 +19,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 class GroupElement(object):
+    # 'name' must be a unique string for each
+    # element in the same group.
     def __init__(self, name, group):
         self.name = name
         self.group = group
