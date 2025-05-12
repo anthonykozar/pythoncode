@@ -21,7 +21,7 @@
 class GroupElement(object):
     # 'name' must be a unique string for each
     # element in the same group.
-    def __init__(self, name, group):
+    def __init__(self, name, group = None):
         self.name = name
         self.group = group
     
@@ -30,9 +30,12 @@ class GroupElement(object):
 
     def __mul__(self, other):
         return self.group.doOperation(self, other)
+    
+    def setGroup(self, group):
+        self.group = group
 
 class CyclicGroupElement(GroupElement):
-    def __init__(self, numericval, group):
+    def __init__(self, numericval, group = None):
         self.val = numericval
         self.name = str(numericval)
         self.group = group

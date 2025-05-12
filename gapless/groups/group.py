@@ -30,11 +30,20 @@ class Group(object):
     # of the group operation a*b should be at operatorTable[a][b].
     def __init__(self, name, elements, operatorTable, operatorSymbol = ""):
         self.name = name
-        self.elemlist = elements
-        self.operatorTable = operatorTable
+        self.elemlist = list(elements)
+        self.operatorTable = self._copyTable(operatorTable)
         self.operatorName = operatorSymbol
         self.order = len(self.elemlist)
+        self._claimElements()
         self._makeMaps()
+    
+    def _copyTable(self, table):
+        return [list(a) for a in table]
+    
+    def _claimElements(self):
+        for e in self.elemlist:
+            if e.group == None:
+                e.setGroup(self)
     
     def _makeMaps(self):
         self.name2elemmap = {}
