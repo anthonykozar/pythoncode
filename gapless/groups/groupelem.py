@@ -50,8 +50,70 @@ AUTO_PERM_LEN = -1
 # the second case, cycles of length one may be omitted.
 class Permutation(GroupElement):
     def __init__(self, perm, permlen = AUTO_PERM_LEN, group = None):
+        self.cycles = None
+        self.cyclestr = None
+        self.group = group
+        if type(perm) != list or len(perm) < 1:
+            raise ValueError("First parameter to Permutation() must be a non-empty list.")
+        if type(perm[0]) == list:
+            # expecting perm to be a list of cycles
+            self.permlist = self.cyclesToPermList(perm, permlen)
+            self.size = len(self.permlist)
+            self.cycles = perm
+        elif type(perm[0]) == int:
+            self.size = self.validatePermList(perm, permlen)
+            self.permlist = perm
+        else:
+            raise TypeError("First parameter to Permutation() must be a list of ints or a list of lists.")
+    
+    # checks that perm is a list of integers from 1 to permlen and returns permutation size
+    def validatePermList(self, perm, permlen):
+        if permlen == AUTO_PERM_LEN:
+            permlen = len(perm)
+        elif permlen != len(perm):
+            raise ValueError("Length of permutation list does not equal 'permlen' parameter")
+        # check for correct values
+        for i in range(1, permlen+1):
+            if not i in perm:
+                raise ValueError("Permutation list does not contain the value %d" % i)
+        return permlen
+    
+    def cyclesToPermList(self, cycles, permlen):
+        # validate cycles and permlen
+        minelem = min(map(min, cycles))
+        if minelem < 1:
+            raise ValueError("Cycles contain a non-positive element")
+        maxelem = max(map(max, cycles))
+        if permlen == AUTO_PERM_LEN:
+            permlen = maxelem
+        if permlen < maxelem:
+            raise ValueError("'permlen' parameter is smaller than the maximum element in cycles")
+        # convert cycles to permutation list
+        permlist = [0]*permlen
+        def setimage(a,b):
+            # map a -> b in permlist
+            if permlist[a-1] == 0:
+                permlist[a-1] = b
+            else:
+                raise ValueError("Duplicate element in cycles")
+        for cycle in cycles:
+            preimg = cycle[0]
+            idx = 1
+            cyclen = len(cycle)
+            while idx < cyclen:
+                img = cycle[idx]
+                setimage(preimg, img)
+                preimg = img
+                idx += 1
+            setimage(preimg, cycle[0])
+        # any remaining zeros in permlist are single cycles, 
+        # so map them to themselves
+        for i in range(permlen):
+            if permlist[i] == 0:
+                setimage(i, i+1)
+        return permlist
 
-def PermutationToCycleNotation(permstr, firstpos = 1, incl1cycles = False):
+def PermutationToCycleNotation(perm, firstpos = 1, incl1cycles = False):
     permlist = map(int, list(permstr))
     permlen = len(permlist)
     output = ""
