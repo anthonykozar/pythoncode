@@ -18,8 +18,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-__all__ = ["Group", "CyclicGroup", "GroupElement", "CyclicGroupElement"]
+__all__ = ["Group", "CyclicGroup", "GroupElement", "CyclicGroupElement", "Permutation", "AUTO_PERM_LEN"]
 
 from .group import Group
 from .group import CyclicGroup
-from .groupelem import GroupElement, CyclicGroupElement
+from .groupelem import GroupElement, CyclicGroupElement, Permutation, AUTO_PERM_LEN
