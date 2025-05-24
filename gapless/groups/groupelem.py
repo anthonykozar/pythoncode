@@ -158,7 +158,7 @@ class Permutation(GroupElement):
             cycles = [[permlen]]
         
         return cycles
-
+    
     # Converts a list of cycles to a str ("cycle notation"). Does not sort
     # the cycles into ascending order, so if a "canonical" represention is
     # needed use the output of permListToCycles(). When useCommas == False,
@@ -193,19 +193,19 @@ class Permutation(GroupElement):
                 cyclenotation += '(' + str(e) + ')'
         
         return cyclenotation
+    
+    def __mul__(self, other):
+        return self.composePerms(self, other)
+    
+    # Calculate the composition of two permutations
+    def composePerms(self, perm1, perm2, firstpos = 1):
+        plist1 = perm1.permlist
+        plist2 = perm2.permlist
+        permlen = len(plist1)
+        if permlen != len(plist2):
+            raise ValueError("Permutation lengths do not match")
 
-'''
-# Find the composition of two permutations
-def ComposePerms(permstr1, permstr2, firstpos = 1):
-    plist1 = map(int, list(permstr1))
-    plist2 = map(int, list(permstr2))
-    permlen = len(plist1)
-    if permlen != len(plist2):
-        print "ComposePerms(): permutation lengths do not match!"
-        return
+        # compute an array that is the composition of plist1 * plist2
+        plist3 = [plist2[ plist1[i]-1 ] for i in range(permlen)]
+        return Permutation(plist3, permlen)
 
-    # compute an array that is the composition of plist1 * plist2
-    plist3 = [plist2[ plist1[i] - firstpos ] for i in range(permlen)]
-    # convert the result to a string
-    return reduce(operator.add, map(str, list(plist3)))
-'''
