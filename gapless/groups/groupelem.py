@@ -50,22 +50,25 @@ AUTO_PERM_LEN = -1
 # the second case, cycles of length one may be omitted.
 class Permutation(GroupElement):
     def __init__(self, perm, permlen = AUTO_PERM_LEN, group = None):
-        self.cycles = None
-        self.cyclestr = None
-        self.group = group
+        # save a permutation list as primary representation of the permutation 
         if type(perm) != list or len(perm) < 1:
             raise ValueError("First parameter to Permutation() must be a non-empty list.")
         if type(perm[0]) == list:
             # expecting perm to be a list of cycles
             self.permlist = self.cyclesToPermList(perm, permlen)
             self.size = len(self.permlist)
-            self.cycles = perm
         elif type(perm[0]) == int:
             self.size = self.validatePermList(perm, permlen)
             self.permlist = perm
         else:
             raise TypeError("First parameter to Permutation() must be a list of ints or a list of lists.")
-    
+
+        # also save a list of cycles and cycle notation string with sorted elements
+        self.cycles = self.permListToCycles(self.permlist)
+        self.cyclestr = self.cyclesToString(self.cycles, self.size)
+
+        GroupElement.__init__(self, self.cyclestr, group)
+   
     # checks that perm is a list of integers from 1 to permlen and returns permutation size
     def validatePermList(self, perm, permlen):
         if permlen == AUTO_PERM_LEN:
@@ -150,6 +153,10 @@ class Permutation(GroupElement):
                         # prepare to check next value
                         value = nextvalue
                         idx = nextvalue - 1
+        if cycles == []:
+            # use [[n]] as the identity element for n elements
+            cycles = [[permlen]]
+        
         return cycles
 
     # Converts a list of cycles to a str ("cycle notation"). Does not sort
