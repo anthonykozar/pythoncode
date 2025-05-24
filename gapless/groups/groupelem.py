@@ -72,14 +72,16 @@ class Permutation(GroupElement):
             permlen = len(perm)
         elif permlen != len(perm):
             raise ValueError("Length of permutation list does not equal 'permlen' parameter")
+
         # check for correct values
         for i in range(1, permlen+1):
             if not i in perm:
                 raise ValueError("Permutation list does not contain the value %d" % i)
         return permlen
     
-    def cyclesToPermList(self, cycles, permlen):
-        # validate cycles and permlen
+    # checks that cycles contains positive elements and that permlen matches;
+    # returns the permutation size
+    def validateCycles(self, cycles, permlen):
         minelem = min(map(min, cycles))
         if minelem < 1:
             raise ValueError("Cycles contain a non-positive element")
@@ -88,14 +90,20 @@ class Permutation(GroupElement):
             permlen = maxelem
         if permlen < maxelem:
             raise ValueError("'permlen' parameter is smaller than the maximum element in cycles")
-        # convert cycles to permutation list
+        return permlen
+
+    # converts a list of cycles to a permutation list
+    def cyclesToPermList(self, cycles, permlen = AUTO_PERM_LEN):
+        permlen = self.validateCycles(cycles, permlen)
         permlist = [0]*permlen
+
         def setimage(a,b):
             # map a -> b in permlist
             if permlist[a-1] == 0:
                 permlist[a-1] = b
             else:
                 raise ValueError("Duplicate element in cycles")
+
         for cycle in cycles:
             preimg = cycle[0]
             idx = 1
@@ -106,48 +114,80 @@ class Permutation(GroupElement):
                 preimg = img
                 idx += 1
             setimage(preimg, cycle[0])
+
         # any remaining zeros in permlist are single cycles, 
         # so map them to themselves
         for i in range(permlen):
             if permlist[i] == 0:
                 setimage(i+1, i+1)
         return permlist
+
+    # converts a permutation list to a list of cycles
+    def permListToCycles(self, permlist, incl1cycles = False):
+        permlen = len(permlist)
+        cycles = []
+        checkedvalues = set()
+        for i in range(1, permlen+1):
+            idx = i - 1
+            if not idx in checkedvalues:
+                # start a new cycle
+                value = i
+                curcycle = []
+                looping = False
+                while not looping:
+                    if idx in checkedvalues:
+                        # this value has already occurred in some cycle
+                        # so we should be at the end of the cycle
+                        if incl1cycles or len(curcycle) > 1:
+                            cycles.append(curcycle)
+                        looping = True
+                    else:
+                        # add and mark this value as checked
+                        curcycle.append(value)
+                        checkedvalues.add(idx)
+                        # get the image of value
+                        nextvalue = permlist[idx]
+                        # prepare to check next value
+                        value = nextvalue
+                        idx = nextvalue - 1
+        return cycles
+
+    # Converts a list of cycles to a str ("cycle notation"). Does not sort
+    # the cycles into ascending order, so if a "canonical" represention is
+    # needed use the output of permListToCycles(). When useCommas == False,
+    # spaces are inserted automatically between elements if the size of the
+    # permuation is > 9, but this can be forced for smaller permutations by
+    # setting useSpaces = True.
+    def cyclesToString(self, cycles, permlen = AUTO_PERM_LEN, incl1cycles = False, useSpaces = False, useCommas = False):
+        permlen = self.validateCycles(cycles, permlen)
+
+        # determine the element separator
+        if useCommas and useSpaces:
+            sep = ', '
+        elif useCommas and not useSpaces:
+            sep = ','
+        elif not useCommas and (useSpaces or permlen > 9):
+            sep = ' '
+        else:
+            sep = ''
+
+        # convert explicit cycles to a string
+        cyclenotation = ''
+        for cyc in cycles:
+            cyclenotation += '(' + sep.join(map(str, cyc)) + ')'
+
+        # add implicit single cycles if requested
+        if incl1cycles:
+            cycelems = set(reduce(operator.add, cycles))
+            allelems = set(xrange(1, permlen+1))
+            missingelems = list(allelems - cycelems)
+            missingelems.sort()
+            for e in missingelems:
+                cyclenotation += '(' + str(e) + ')'
+        
+        return cyclenotation
+
 '''
-def PermutationToCycleNotation(perm, firstpos = 1, incl1cycles = False):
-    permlist = map(int, list(permstr))
-    permlen = len(permlist)
-    output = ""
-    # create an array with permlen elements initialized to False
-    checkedvalues = [False] * permlen
-
-    for i in range(firstpos, permlen+firstpos):
-        idx = i - firstpos
-        if not checkedvalues[idx]:
-            # start a new cycle
-            value = i
-            cyclestr = ''
-            looping = False
-            while not looping:
-                if checkedvalues[idx]:
-                    # this value has already occurred in some cycle
-                    # so we should be at the end of the cycle
-                    if incl1cycles or len(cyclestr) > 1:
-                        output += '(' + cyclestr + ')'
-                    looping = True
-                else:
-                    # add and mark this value as checked
-                    cyclestr += str(value)
-                    checkedvalues[idx] = True
-                    # get the image of value 
-                    nextvalue = permlist[idx]
-                    # prepare to check next value
-                    value = nextvalue
-                    idx = nextvalue - firstpos
-
-    if output == '': output = '(1)'
-    if printcycles: print output,
-    return output
-
 # Find the composition of two permutations
 def ComposePerms(permstr1, permstr2, firstpos = 1):
     plist1 = map(int, list(permstr1))
