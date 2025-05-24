@@ -110,9 +110,9 @@ class Permutation(GroupElement):
         # so map them to themselves
         for i in range(permlen):
             if permlist[i] == 0:
-                setimage(i, i+1)
+                setimage(i+1, i+1)
         return permlist
-
+'''
 def PermutationToCycleNotation(perm, firstpos = 1, incl1cycles = False):
     permlist = map(int, list(permstr))
     permlen = len(permlist)
@@ -161,3 +161,4 @@ def ComposePerms(permstr1, permstr2, firstpos = 1):
     plist3 = [plist2[ plist1[i] - firstpos ] for i in range(permlen)]
     # convert the result to a string
     return reduce(operator.add, map(str, list(plist3)))
+'''
