@@ -59,7 +59,7 @@ class Permutation(GroupElement):
             self.size = len(self.permlist)
         elif type(perm[0]) == int:
             self.size = self.validatePermList(perm, permlen)
-            self.permlist = perm
+            self.permlist = list(perm)
         else:
             raise TypeError("First parameter to Permutation() must be a list of ints or a list of lists.")
 
