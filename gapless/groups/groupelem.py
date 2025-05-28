@@ -33,6 +33,25 @@ class GroupElement(object):
     def __mul__(self, other):
         return self.group.doOperation(self, other)
     
+    def __pow__(self, expon):
+        if type(expon) != int:
+            return NotImplemented
+        if expon == 0:
+            # FIXME: return the identity
+            return
+        elif expon < 0:
+            a = self.inverse()
+            expon = -expon
+        else:
+            a = self
+        res = a
+        for i in xrange(expon-1):
+            res *= a
+        return res
+    
+    def inverse(self):
+        pass
+    
     def setGroup(self, group):
         self.group = group
 
@@ -41,6 +60,9 @@ class CyclicGroupElement(GroupElement):
         self.val = numericval
         self.name = str(numericval)
         self.group = group
+    
+    def inverse(self):
+        pass
 
 AUTO_PERM_LEN = -1
 
@@ -194,6 +216,9 @@ class Permutation(GroupElement):
         
         return cyclenotation
     
+    def __eq__(self, other):
+        return (self.permlist == other.permlist)
+    
     def __mul__(self, other):
         return self.composePerms(self, other)
     
@@ -208,4 +233,7 @@ class Permutation(GroupElement):
         # compute an array that is the composition of plist1 * plist2
         plist3 = [plist2[ plist1[i]-1 ] for i in range(permlen)]
         return Permutation(plist3, permlen)
+    
+    def inverse(self):
+        pass
 
