@@ -31,9 +31,10 @@ class Group(object):
     # 'operatorTable' should be a list of lists of the GroupElement objects in 
     # 'elements'. Each sublist is one row of the group's Cayley table. The result 
     # of the group operation a*b should be at operatorTable[a][b].
-    def __init__(self, name, elements, operatorTable, operatorSymbol = ""):
+    def __init__(self, name, elements, identity, operatorTable, operatorSymbol = ""):
         self.name = name
         self.elemlist = list(elements)
+        self.identity = identity
         self.operatorTable = self._copyTable(operatorTable)
         self.operatorName = operatorSymbol
         self.order = len(self.elemlist)
@@ -68,7 +69,9 @@ class Group(object):
             return self.operatorTable[li][ri]
         else:
             raise ValueError("Group element is not a member of this group.")
-
+    def getIdentity(self):
+        return self.identity
+    
     def getElementByName(self, name):
         if self.name2elemmap.has_key(name):
             return self.name2elemmap[name]
@@ -109,18 +112,28 @@ class Group(object):
     def rightCoset(self, elem, subgroup):
         return [p*elem for p in subgroup]
     
+    # If 'only1percoset' is True, then only
+    # one element of each coset is returned.
+    def allLeftCosets(self, subgroup, only1percoset = False):
+        pass
+    
+    # If 'only1percoset' is True, then only
+    # one element of each coset is returned.
+    def allRightCosets(self, subgroup, only1percoset = False):
+        pass
+
 class CyclicGroup(Group):
     def __init__(self, order):
         #FIXME: name = u'\N{DOUBLE-STRUCK CAPITAL Z}' + '_' + str(order)
         name = 'Z_' + str(order)
-        elems = [CyclicGroupElement(i, self) for i in range(order)]
+        elems = [CyclicGroupElement(i, order, self) for i in range(order)]
         op = [[elems[(a+b)%order] for b in range(order)] for a in range(order)]
-        Group.__init__(self, name, elems, op, '+')
+        Group.__init__(self, name, elems, elems[0], op, '+')
 
 class PermutationGroup(Group):
     # 'generators' should be a list of Permutation objects or a list of values
     # that can be passed as the 'perm' parameter to the Permutation class
-    # constructor (i.e. permutation lists or lists of cycles. 'permlen' will be
+    # constructor (i.e. permutation lists or lists of cycles). 'permlen' will be
     # passed to the Permutation constructor too.
     def __init__(self, generators, permlen = AUTO_PERM_LEN):
         # convert a generator to a Permutation object if it isn't one
@@ -130,6 +143,11 @@ class PermutationGroup(Group):
         self.genelems = [toGeneratorElement(p) for p in generators]
         elems = self.generateSubgroup(self.genelems)
         # FIXME: need to put the elements in sorted order
+        # find the identity element
+        idstr = '(' + str(self.genelems[0]. size) + ')'
+        for el in elems:
+            if el.name == idstr:
+                idelem = el
         # FIXME? do we need a mechanism in the Group class to specify when
         # an operator table is not used by a particular subclass?
         op = []
@@ -138,4 +156,4 @@ class PermutationGroup(Group):
         else:
             gennames = ", ".join([el.name for el in self.genelems])
             name = "<" + gennames + ">"
-        Group.__init__(self, name, elems, op, '')
+        Group.__init__(self, name, elems, idelem, op, '')

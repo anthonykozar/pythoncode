@@ -56,13 +56,18 @@ class GroupElement(object):
         self.group = group
 
 class CyclicGroupElement(GroupElement):
-    def __init__(self, numericval, group = None):
+    def __init__(self, numericval, modulus, group = None):
         self.val = numericval
+        self.modulus = modulus
         self.name = str(numericval)
         self.group = group
     
+    def __eq__(self, other):
+        return (self.modulus == other.modulus and self.val == other.val)
+    
     def inverse(self):
-        pass
+        inv = str((self.modulus - self.val) % self.modulus)
+        return self.group.getElementByName(inv)
 
 AUTO_PERM_LEN = -1
 
@@ -235,5 +240,9 @@ class Permutation(GroupElement):
         return Permutation(plist3, permlen)
     
     def inverse(self):
-        pass
+        invlist = [0]*self.size
+        for i in range(self.size):
+            im = self.permlist[i]
+            invlist[im-1] = i+1
+        return Permutation(invlist, self.size)
 

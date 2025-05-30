@@ -33,7 +33,7 @@ a = GroupElement("a")
 b = GroupElement("b")
 ab = GroupElement("ab")
 op = [[e,a,b,ab],[a,e,ab,b],[b,ab,e,a],[ab,b,a,e]]
-k4 = Group("K_4", [e,a,b,ab], op)
+k4 = Group("K_4", [e,a,b,ab], e, op)
 
 ReportTestResult(list(map(str, k4.elemlist)) == ['e', 'a', 'b', 'ab'], "Element names set and returned by str()")
 
