@@ -115,12 +115,39 @@ class Group(object):
     # If 'only1percoset' is True, then only
     # one element of each coset is returned.
     def allLeftCosets(self, subgroup, only1percoset = False):
-        pass
+        return self._findAllCosets(self.leftCoset, subgroup, only1percoset)
     
     # If 'only1percoset' is True, then only
     # one element of each coset is returned.
     def allRightCosets(self, subgroup, only1percoset = False):
-        pass
+        return self._findAllCosets(self.rightCoset, subgroup, only1percoset)
+    
+    def _findAllCosets(self, cosetfunc, subgroup, only1percoset):
+        includedelems = list(subgroup)
+        cosets = []
+        numcosets = self.order / len(subgroup)
+        if only1percoset:
+            cosets.append(self.identity)
+        else:
+            cosets.append(list(subgroup))
+        for el in self.elemlist:
+            # find an element not in any coset yet
+            elfound = False
+            for el2 in includedelems:
+                if el2 == el:
+                    elfound = True
+                    break
+            if elfound: continue
+            # make a coset with that element
+            elcoset = cosetfunc(el, subgroup)
+            if only1percoset:
+                cosets.append(elcoset[0])
+            else:
+                cosets.append(elcoset)
+            if len(cosets) == numcosets:
+                break
+            includedelems += elcoset
+        return cosets
 
 class CyclicGroup(Group):
     def __init__(self, order):
