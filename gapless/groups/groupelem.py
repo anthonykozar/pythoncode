@@ -20,18 +20,21 @@
 
 import operator
 
+MAX_ELEMENT_ORDER = 10000
+
 class GroupElement(object):
     # 'name' must be a unique string for each
     # element in the same group.
     def __init__(self, name, group = None):
         self.name = name
         self.group = group
+        self._order = None
     
     def __str__(self):
         return self.name
 
     def __mul__(self, other):
-        return self.group.doOperation(self, other)
+        return self.group.doTableOperation(self, other)
     
     def __pow__(self, expon):
         if type(expon) != int:
@@ -50,10 +53,27 @@ class GroupElement(object):
         return res
     
     def inverse(self):
-        pass
+        return self.group._getInverseFromTable(self)
     
     def setGroup(self, group):
         self.group = group
+    
+    def order(self, maxorder = MAX_ELEMENT_ORDER):
+        if self._order == None:
+            self._calculateOrder(maxorder)
+        return self._order
+    
+    def _calculateOrder(self, maxorder):
+        id = self.group.getIdentity()
+        o = 1
+        a = self
+        while a != id and o <= maxorder:
+            o += 1
+            a *= self
+        if o > maxorder:
+            raise RuntimeError("Calculation of element order exceeded iteration limit.")
+        self._order = o
+        return o
 
 class CyclicGroupElement(GroupElement):
     def __init__(self, numericval, modulus, group = None):

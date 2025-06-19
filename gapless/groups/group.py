@@ -62,15 +62,26 @@ class Group(object):
 
     # default code to perform the group operation on two group elements
     # using self.operatorTable
-    def doOperation(self, left, right):
+    def doTableOperation(self, left, right):
         if left.group == self and right.group == self:
             li = self.name2indexmap[left.name]
             ri = self.name2indexmap[right.name]
             return self.operatorTable[li][ri]
         else:
             raise ValueError("Group element is not a member of this group.")
+    
     def getIdentity(self):
         return self.identity
+    
+    def _getInverseFromTable(self, element):
+        elidx = self.name2indexmap[element.name]
+        # search the row corresponding to 'element' for the identity
+        for i in range(len(self.operatorTable[elidx])):
+            if self.operatorTable[elidx][i] == self.identity:
+                # the element corresponding to this column is the inverse
+                return self.elemlist[i]
+        # operatorTable is not a proper group operation if there is no inverse
+        raise ValueError("Group %s has no inverse for element %s" % (self.name, element.name))
     
     def getElementByName(self, name):
         if self.name2elemmap.has_key(name):
