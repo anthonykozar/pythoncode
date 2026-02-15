@@ -46,7 +46,10 @@ for n in xrange(2,8):
 # The number of edges appears to be 1/2 of the values in OEIS A000186.
 # https://oeis.org/A000186
 
-# This graph can be used to make Latin squares by finding cliques of size n-1.  Combining each such clique with the identity permutation provides a set of permutations that can be applied to any permutation of n elements to generate the rows of a Latin square!
+# This graph can be used to make Latin squares by finding cliques of size n-1.
+# Combining each such clique with the identity permutation provides a set of
+# permutations that can be applied to any permutation of n elements to generate
+# the rows of a Latin square!
 
 # find the neighbors of vertex v
 def neighbors(v, edges):
@@ -86,6 +89,22 @@ for n in xrange(2,8):
 # 6 {80: 225, 82: 40}
 # 7 {578: 420, 579: 720, 580: 714}
 
+def isclique(cliquevertices, edges):
+    vneighbors = []
+    # make a list of the neighbors of each v in cliquevertices and add v to its list 
+    for i, v in enumerate(cliquevertices):
+        vneighbors.append(neighbors(v, edges))
+        vneighbors[i].add(v)
+    # test that vertices is a subset of each list
+    return all([set(cliquevertices).issubset(vlist) for vlist in vneighbors])
+
+def printclique(clique, vertices, edges, printidentity = False):
+    if printidentity:
+        permlen = len(vertices[0])
+        print tuple(xrange(1, permlen+1))
+    for v in clique:
+        print vertices[v]
+
 # find a single clique with size elements
 def findclique(size, vertices, edges):
     # find a vertex with at least size-1 neighbors
@@ -99,9 +118,60 @@ def findclique(size, vertices, edges):
         return None
     # see if v is part of a size-clique
     clique = set([v])
-    v2 = 
-    while len(clique) < size:
+    #v2 = 
+    #while len(clique) < size:
         
         # see how many neighbors
 
+# find all size-cliques containing a particular vertex
+# returns a list of sets
+def findcliquesofv(v, size, edges):
+    nv = neighbors(v, e)
+    nbrsleft = set(nv)
+    cliques = []
+    while len(nbrsleft) > 0:
+        candidate = set([v])
+        shared = set(nbrsleft)
+        vfirst = -1
+        if len(candidate) + len(shared) < size:
+            break
+        while len(candidate) + len(shared) > size:
+            v1 = shared.pop()
+            if len(candidate) == 1:
+                # remember first vertex so that we can remove it from nbrsleft
+                vfirst = v1
+            candidate.add(v1)
+            shared = shared.intersection(neighbors(v1, edges))
+        if len(candidate) + len(shared) == size:
+            candidate.update(shared)
+            foundclique = isclique(candidate, edges)
+        else: foundclique = False
+        if foundclique:
+            cliques.append(candidate)
+            nbrsleft.difference_update(candidate)
+        else:
+            if vfirst > -1:
+                nbrsleft.remove(vfirst)
+    return cliques
+
+def convert2sortedtuples(listofcolls):
+    listoflists = map(list, listofcolls)
+    for l in listoflists:
+        l.sort()
+    return map(tuple, listoflists)
+
+def sharedneighbors(v0, e):
+    n0 = neighbors(v0, e)
+    allshared = set()
+    for v in n0:
+        nv = neighbors(v, e)
+        shared = n0.intersection(nv)
+        allshared.update(shared)
+    return allshared
+
 # find the number of cliques of the required sizes for n elements
+
+# cliques in n=5 derangement graph:
+[[0, 16, 32, 36], [0, 17, 30, 37], [6, 12, 32, 36], [0, 18, 27, 43], [0, 19, 28, 41], [9, 11, 28, 41],
+ [1, 14, 31, 39], [1, 15, 29, 38], [7, 11, 29, 38], [1, 20, 26, 40], [1, 21, 25, 42], [10, 13, 25, 42]]
+
