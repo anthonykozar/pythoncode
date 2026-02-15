@@ -28,20 +28,80 @@ def graphcompatiblepairs(vertices):
                 edges.append((i,j))
     return edges
 
-# This graph can be used to make Latin squares by finding cliques of size n-1.  Combining each such clique with the identity permutation provides a set of permutationsthat can be applied to any permutation of n elements to generate the rows of a Latin square!
-
-# find the number of cliques of the required sizes for n elements
-
 # find the size of the graph for n elements
-'''for n in xrange(2,10):
+'''
+for n in xrange(2,8):
     d = derangements(n)
     e = graphcompatiblepairs(d)
     print n, len(d), len(e)
 '''
+# Results:
+# n |V| |E|
+# 2 1 0
+# 3 2 1
+# 4 9 12
+# 5 44 276
+# 6 265 10640
+# 7 1854 536880
+# The number of edges appears to be 1/2 of the values in OEIS A000186.
+# https://oeis.org/A000186
 
-def neighbors(n, edges):
+# This graph can be used to make Latin squares by finding cliques of size n-1.  Combining each such clique with the identity permutation provides a set of permutations that can be applied to any permutation of n elements to generate the rows of a Latin square!
+
+# find the neighbors of vertex v
+def neighbors(v, edges):
     adj = set()
-    for a,b in edges:
-        if a == n: adj.add(b)
-        elif b == n: adj.add(a)
+    for v1,v2 in edges:
+        if v1 == v: adj.add(v2)
+        elif v2 == v: adj.add(v1)
     return adj
+
+# count how many vertices there are of each degree
+def countdegrees(vertices, edges):
+    from collections import defaultdict
+    degrees = defaultdict(int)
+    for v1,v2 in edges:
+        degrees[v1] += 1
+        degrees[v2] += 1
+    counts = defaultdict(int)
+    for v in degrees:
+        d = degrees[v]
+        counts[d] += 1
+    return counts
+
+# count the occurrences of each degree for graphs with n elements
+'''
+print "n {degree: count,...}"
+for n in xrange(2,8):
+    d = derangements(n)
+    e = graphcompatiblepairs(d)
+    print n, dict(countdegrees(d,e))
+'''
+# Results:
+# n {degree: count,...}
+# 2 {}
+# 3 {1: 2}
+# 4 {2: 6, 4: 3}
+# 5 {12: 20, 13: 24}
+# 6 {80: 225, 82: 40}
+# 7 {578: 420, 579: 720, 580: 714}
+
+# find a single clique with size elements
+def findclique(size, vertices, edges):
+    # find a vertex with at least size-1 neighbors
+    v = 0
+    vadj = neighbors(v, edges)
+    while v < len(vertices) and len(vadj) < size-1:
+        v += 1
+        vadj = neighbors(v, edges)
+    if len(vadj) < size-1:
+        # no suitable vertex found
+        return None
+    # see if v is part of a size-clique
+    clique = set([v])
+    v2 = 
+    while len(clique) < size:
+        
+        # see how many neighbors
+
+# find the number of cliques of the required sizes for n elements
