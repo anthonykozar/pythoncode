@@ -20,9 +20,9 @@ def derangements(n):
 # edges connecting pairs that do not have the same value in the same position (column).
 def graphcompatiblepairs(vertices):
     edges = []
-    for i in xrange(len(vertices)):
+    for i in xrange(len(vertices)-1):
         p1 = vertices[i]
-        for j in xrange(i, len(vertices)):
+        for j in xrange(i+1, len(vertices)):
             p2 = vertices[j]
             if all([p1[k] != p2[k] for k in xrange(len(p1))]):
                 edges.append((i,j))
@@ -58,6 +58,21 @@ def neighbors(v, edges):
         if v1 == v: adj.add(v2)
         elif v2 == v: adj.add(v1)
     return adj
+
+# returns the induced subgraph containing only the vertices in subgrvertices and the edges connecting them
+# does not renumber the vertices
+def inducesubgraph(subgrvertices, edges):
+    subgr = []
+    for v1,v2 in edges:
+        if v1 in subgrvertices and v2 in subgrvertices:
+            subgr.append((v1,v2))
+    return subgr
+
+# return the induced subgraph containing vertex v and all of its neighbors
+def neighborsubgraph(v, edges):
+    nv = neighbors(v, edges)
+    nv.add(v)
+    return inducesubgraph(nv, edges)
 
 # count how many vertices there are of each degree
 def countdegrees(vertices, edges):
@@ -169,9 +184,51 @@ def sharedneighbors(v0, e):
         allshared.update(shared)
     return allshared
 
-# find the number of cliques of the required sizes for n elements
+# make a graph with the sets of listofsets as vertices and an edge for each pair of sets with nonempty intersection
+def graphintersectingsets(listofsets):
+    edges = []
+    for i in xrange(len(listofsets)-1):
+        for j in xrange(i+1, len(listofsets)):
+            if len(listofsets[i].intersection(listofsets[j])) > 0:
+                edges.append((i,j))
+    return edges
+ 
+from itertools import combinations
 
-# cliques in n=5 derangement graph:
-[[0, 16, 32, 36], [0, 17, 30, 37], [6, 12, 32, 36], [0, 18, 27, 43], [0, 19, 28, 41], [9, 11, 28, 41],
- [1, 14, 31, 39], [1, 15, 29, 38], [7, 11, 29, 38], [1, 20, 26, 40], [1, 21, 25, 42], [10, 13, 25, 42]]
+# find all cliques of the required sizes for n elements
+'''
+for n in xrange(2, 6):
+    d = derangements(n)
+    e = graphcompatiblepairs(d)
+    cit = combinations(xrange(len(d)), n-1)
+    cliques = [cand for cand in cit if isclique(cand, e)]
+    # find intersecting clique pairs
+    g = graphintersectingsets(map(set, cliques))
+    print n, len(cliques), len(g)
+'''
+# Results:
+# 2 1 0
+# 3 1 0
+# 4 4 3
+# 5 56 420
 
+# print len(cliques)
+# for c in cliques:
+#     print c
+# print g
+
+def printneighborhood(vcenter, edges):
+    nbrhood = neighbors(vcenter, edges)
+    nbrhood.add(vcenter)
+    subgr = inducesubgraph(nbrhood, edges)
+    print "Subgraph of neighborhood of vertex %d" % vcenter
+    print "v degree neighbors"
+    for v in sorted(nbrhood):
+        nv = neighbors(v, subgr)
+        print v, len(nv), sorted(nv)
+
+d = derangements(5)
+e = graphcompatiblepairs(d)
+for v in xrange(len(d)):
+    printneighborhood(v, e)
+    print
