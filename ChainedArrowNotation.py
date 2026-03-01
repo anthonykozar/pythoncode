@@ -122,25 +122,32 @@ def evalchain(ch, exponlimit = 40):
 # a^(c)b where c is the number of arrows.
 # E.g. 2^(4)3 = 2^^^^3 = 2^^^2^^^2
 def evaluparrows(a, b, c, exponlimit = 40):
-    print "evaluparrows(%d,%d,%d)" % (a,b,c)
+    if DEBUG: print "evaluparrows(%s,%s,%s)" % (str(a), str(b), str(c))
+    if b > exponlimit:
+        # raise ValueError with a string representation of the partially evaluated expression
+        arrows = "^" * c
+        expr = "%d%s%d" % (a, arrows, b)
+        raise  ValueError(expr)
+    # base cases
     if a == 1 or b == 0: return 1
     if b == 1: return a
-    if c == 1:
-        if b <= exponlimit:
-            return a**b
-        else:
-            expr = "%d^%d" % (a, b)
-            print "exponent limit exceeded: " + expr 
-            return expr
-    reps = b
-    for arrows in xrange(c, 1, -1):
-        res = a
-        for i in xrange(reps-1):
-            res = evaluparrows(a, res, arrows-1, exponlimit)
-            print "res = %s" % str(res)
-        reps = res
-    return reps
+    if c == 1: return a**b
+    # evaluate arrow expression recursively
+    if DEBUG: print "arrows = %s" % str(c)
+    res = a
+    for i in xrange(b-1):
+        if DEBUG: print "i = %s" % str(i)
+        try: res = evaluparrows(a, res, c-1, exponlimit)
+        except ValueError as err:
+            # prepend unevaluated a's and arrows
+            arrows = "^" * (c-1)
+            left = (str(a)+arrows) * (b-2-i)
+            expr = left + err.args[0]
+            raise  ValueError(expr)
+        if DEBUG: print "res = %s" % str(res)
+    if DEBUG: print "return %s" % str(res)
+    return res
 
 # simplifychain([3,3,1,3,2])
 # simplifychain([2,2,2,3])
-evaluparrows(2,2,2)
+evaluparrows(2,5,2)
