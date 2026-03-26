@@ -7,6 +7,7 @@
 # Anthony Kozar
 # March 15-16, 2026
 
+from itertools import combinations
 
 def f(a,b):
     return (a**3)*b - a*(b**3)
@@ -57,15 +58,20 @@ def listcounterex(mod, f=f, maxexamples = 10, skipzero = True, nodups = True):
 # This list should be complete because the triple (1,2,3) produces the values f(2,1) = 6, f(3,1) = 24, and f(3,2) = 30. So (1,2,3) is a counterexample for any number which does not divide any of these three values. It just happens that there are no counterexamples for any of the divisors of 24 and 30. (And every output of f() is divisible by 6).
 # every 4 ints are divisible by 7,14,16,21,42;
 # every 5 ints are divisible by 9,18,20;
-# every 6 ints are divisible by 11 (22);
-# every 7 ints are divisible by 13 (26);
-# every 9 ints are divisible by 17 (34);
-# every 10 ints are divisible by 19 (38).
+# every 6 ints are divisible by 11,22 (66?);
+# every 7 ints are divisible by 13 (78?);
+# every 9 ints are divisible by 17 (102?);
+# every 10 ints are divisible by 19 (114?).
+# every 12 ints are divisible by 23,25 (138?,150?).
 
 # Two questions for further research:
 # 1. For each positive n, What is the minimum number of arbitrary integers needed to guarantee that n divides f(a,b) for some pair a,b?
 # 2. Answer question #1 for other symmetric functions.
 
+# Table of minimum # ints for n|f(a,b)
+# n   | 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+# -----------------------------------------------------------------------
+# min | 2 2 2 3 3 2 4 3 5  3  6  3  7  4  3  4  9  5 10  5  4  6 12  3 12
 
 def g(a,b):
     return (a**5)*b - a*(b**5)
@@ -82,16 +88,17 @@ for s in combinations(range(1,13), 4):
 # every 4 ints are divisible by 7,13, maybe 390?;
 # every 5 ints are divisible by 9.
 
-mod = 16
-for size in xrange(2, mod):
-    foundcountexample = False
-    for s in combinations(range(1,mod), size):
-        fp = [f(a,b)%mod for (b,a) in combinations(s,2)]
-        nz = map(lambda x:x!=0, fp)
-        if all(nz):
-            print s, fp
-            foundcountexample = True
+def minsetsize(mod, f=f):
+    from itertools import combinations
+    for size in xrange(2, mod):
+        foundcountexample = False
+        for s in combinations(range(1,mod), size):
+            fp = [f(a,b)%mod for (b,a) in combinations(s,2)]
+            nz = map(lambda x:x!=0, fp)
+            if all(nz):
+                print s, fp
+                foundcountexample = True
+                break
+        if not foundcountexample:
+            print size, "ints are sufficient"
             break
-    if not foundcountexample:
-        print size, "ints are sufficient"
-        break
