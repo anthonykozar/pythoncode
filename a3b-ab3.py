@@ -56,6 +56,22 @@ def listcounterex(mod, f=f, maxexamples = 10, skipzero = True, nodups = True):
 
 # mod values for which there are no counterexamples: 1,2,3,4,5,6,8,10,12,15,24,30
 # This list should be complete because the triple (1,2,3) produces the values f(2,1) = 6, f(3,1) = 24, and f(3,2) = 30. So (1,2,3) is a counterexample for any number which does not divide any of these three values. It just happens that there are no counterexamples for any of the divisors of 24 and 30. (And every output of f() is divisible by 6).
+
+def minsetsize(mod, f=f):
+    from itertools import combinations
+    for size in xrange(2, mod):
+        foundcountexample = False
+        for s in combinations(range(1,mod), size):
+            fp = [f(a,b)%mod for (b,a) in combinations(s,2)]
+            nz = map(lambda x:x!=0, fp)
+            if all(nz):
+                print s, fp
+                foundcountexample = True
+                break
+        if not foundcountexample:
+            print size, "ints are sufficient"
+            break
+
 # every 4 ints are divisible by 7,14,16,21,42;
 # every 5 ints are divisible by 9,18,20;
 # every 6 ints are divisible by 11,22 (66?);
@@ -76,29 +92,23 @@ def listcounterex(mod, f=f, maxexamples = 10, skipzero = True, nodups = True):
 def g(a,b):
     return (a**5)*b - a*(b**5)
 
-for s in combinations(range(1,13), 4):
-    fp = [g(a,b)%13 for (b,a) in combinations(s,2)]
-    nz = map(lambda x:x!=0, fp)
-    if all(nz):
-        print s, fp
-
 # For g() above, 
-# every pair is divisible by 1,2,3,4,5,6,8,10 (? check again);
+# every pair is divisible by 1,2,3,5,6,10,15,30;
 # every triple is divisible by 240;
-# every 4 ints are divisible by 7,13, maybe 390?;
-# every 5 ints are divisible by 9.
+# every 4 ints are divisible by 7,13,14,21 maybe 390?;
+# every 5 ints are divisible by 9,17,18;
+# every 6 ints are divisible by 11,22;
+# every 7 ints are divisible by 25
+# every 10 ints are divisible by 19.
 
-def minsetsize(mod, f=f):
-    from itertools import combinations
-    for size in xrange(2, mod):
-        foundcountexample = False
-        for s in combinations(range(1,mod), size):
-            fp = [f(a,b)%mod for (b,a) in combinations(s,2)]
-            nz = map(lambda x:x!=0, fp)
-            if all(nz):
-                print s, fp
-                foundcountexample = True
-                break
-        if not foundcountexample:
-            print size, "ints are sufficient"
-            break
+
+# Table of minimum # ints for n|g(a,b)
+# n   | 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+# -----------------------------------------------------------------------
+# min | 2 2 2 3 2 2 4 3 5  2  6  3  4  4  2  3  5  5 10  3  4  6 12?  3  7
+
+def sumsqrs(a,b):
+    return a*a + b*b
+
+def diffsqrs(a,b):
+    return a*a - b*b
