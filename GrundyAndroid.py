@@ -43,10 +43,10 @@ def mex(values):
     print "mex(): stop assumption is incorrect?", values
     return None
 
-def GrundysGame(maxheap = 20):
+def GrundysGame(maxheap = 20, partfunc = unequalbipartitions, mex = mex):
     g = [0]
     for n in range(1, maxheap+1):
-        moves = unequalbipartitions(n)
+        moves = partfunc(n)
         movevals = list()
         for mv in moves:
             val = g[mv[0]] ^ g[mv[1]]
@@ -56,10 +56,10 @@ def GrundysGame(maxheap = 20):
         # print n, movevals, nval
     return g
 
-def GrundySplit3(maxheap = 20):
+def GrundySplit3(maxheap = 20, partfunc = unequaltripartitions, mex = mex):
     g = [0]
     for n in range(1, maxheap+1):
-        moves = unequaltripartitions(n)
+        moves = partfunc(n)
         movevals = list()
         for mv in moves:
             val = g[mv[0]] ^ g[mv[1]] ^ g[mv[2]]
@@ -69,7 +69,8 @@ def GrundySplit3(maxheap = 20):
         # print n, movevals, nval
     return g
 
-def NimSequence(movesfunc, xor, maxheap = 20):
+def NimSequence(movesfunc, maxheap = 20):
+    from operator import xor
     g = [0]
     for n in range(1, maxheap+1):
         moves = movesfunc(n)
