@@ -92,8 +92,9 @@ def BinomialTransform(seq):
 # the values of its LST can be computed arbitrarily high.  But if higher terms
 # are missing from seq, then we cannot accurately compute its LST beyond the
 # maximum term in seq (or max+1). (right?)
-def LSieveTransform(seq, seqIsComplete = False, Nlength = None, debug = True):
+def LSieveTransform(seq, seqIsComplete = False, Nlength = None, debug = False):
     seq = sorted(seq)
+    # FIXME: need to remove duplicates?
     seqmax = max(seq)
     seqlen = len(seq)
     # if seq is complete and Nlength is given, use it, otherwise
@@ -128,3 +129,20 @@ def LSieveTransform(seq, seqIsComplete = False, Nlength = None, debug = True):
     
     return s
 
+# For a monotonically non-decreasing seq,
+# returns the positive integers that are
+# missing from seq (up to the largest value in seq).
+def NComplement(seq):
+    i = 0
+    n = 1
+    miss = []
+    while i < len(seq):
+        if seq[i] < n:
+            i += 1
+        elif seq[i] == n:
+            i += 1
+            n += 1
+        elif seq[i] > n:
+            miss.append(n)
+            n += 1
+    return miss
