@@ -140,6 +140,35 @@ def findprimes4(maxnum = 100, echoCount = True, echoProgress = False, echoPrimes
 
 # primes = findprimes4(1000000, True, True)
 
+# SEARCHING WITH PRIMALITY TESTS
+
+# Use Wilson's theorem to test primality.
+# Optimizations:
+#   - accumulate the factorial function
+#   - skip even numbers
+#
+# This is MUCH slower than the above methods even though there is only one (very large precision) division per n.
+#
+# Benchmarks:
+#   maxnum =    100,000  time =  secs
+#   maxnum =  1,000,000  time =  secs
+#   maxnum = 10,000,000  time = 
+def findprimesWilson(maxnum = 100, echoCount = True, echoProgress = False, echoPrimes = False):
+    primes = [2]
+    fact = 2 # factorial of n-1
+    # start with 3 and step by 2
+    for n in range(3, maxnum+1, 2):
+        if fact % n == n-1:
+            primes.append(n)
+            if echoPrimes:
+                print n
+        fact *= n*(n+1)
+        if echoProgress and (n+1) % 100000 == 0:
+            print "Searched thru %s" % (n+1) 
+    if echoCount:
+        print len(primes)
+    return primes
+
 
 # UTILITIES
 
