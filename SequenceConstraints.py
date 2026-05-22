@@ -3,7 +3,47 @@
 # Anthony Kozar
 # May 21, 2026
 
-class SequenceConstraints(object):
+# Base class for all constraints
+# Subclasses should override test() to implement their own constraint(s).
+# This class just tests that the sequence is nonempty.
+class Constraint(object):
+    def __init__(self):
+        pass
+    
+    # seq is a list of integers
+    # Returns True if seq satisfies the constraint and False if it doesn't.
+    def test(self, seq):
+        return len(seq) > 0
+
+class BinaryRelation(Constraint):
+    TYPE_ADJACENT = 1
+    TYPE_NOT_ADJACENT = 2
+    TYPE_LESS_THAN = 3
+    TYPE_GREATER_THAN = 4
+    
+    def __init__(self, ctype, idx1, idx2, result = None):
+        self.type = ctype
+        self.idx1 = idx1
+        self.idx2 = idx2
+        self.result = result
+    
+    def test(self, seq):
+        # check that indices are not too high
+        if self.idx1 >= len(seq) or self.idx2 >= len(seq):
+            return False
+        # check relation by type
+        if self.type == self.TYPE_ADJACENT:
+            return (seq[self.idx1] == seq[self.idx2] + 1) or (seq[self.idx1] == seq[self.idx2] - 1)
+        elif self.type == self.TYPE_NOT_ADJACENT:
+            return (seq[self.idx1] != seq[self.idx2] + 1) and (seq[self.idx1] != seq[self.idx2] - 1)
+        elif self.type == self.TYPE_LESS_THAN:
+            return seq[self.idx1] < seq[self.idx2]
+        elif self.type == self.TYPE_GREATER_THAN:
+            return seq[self.idx1] > seq[self.idx2]
+        else:
+            raise ValueError("Unknown constraint type %s in BinaryRelation object." % str(self.type))
+
+class SequenceConstraints(Constraint):
     MODE_RESET = 1
     MODE_REPLACE = 2
     MODE_MERGE = 2
@@ -11,6 +51,7 @@ class SequenceConstraints(object):
     def __init__(self, constraintstr = ""):
         self.setConstraints(constraintstr, mode = self.MODE_RESET)
     
+    # creates multiple constraints by parsing an input string
     def setConstraints(self, constraintstr, mode = MODE_REPLACE):
         if mode == self.MODE_RESET:
             self._numoptions = {}
@@ -48,7 +89,18 @@ class SequenceConstraints(object):
                 if readforb and len(forb) > 0:
                     self._numforbidden[seqidx] = forb
                 seqidx += 1
-            
+            elif s[i] == '|':
+                # nums before and after | must be adjacent integers
+                self._relations.append(BinaryRelation(BinaryRelation.TYPE_ADJACENT, seqidx-1, seqidx))
+            elif s[i] == '!':
+                # nums before and after ! cannot be adjacent
+                self._relations.append(BinaryRelation(BinaryRelation.TYPE_NOT_ADJACENT, seqidx-1, seqidx))
+            elif s[i] == '<':
+                # num before < must be less than the num after
+                self._relations.append(BinaryRelation(BinaryRelation.TYPE_LESS_THAN, seqidx-1, seqidx))
+            elif s[i] == '>':
+                # num before > must be greater than the num after
+                self._relations.append(BinaryRelation(BinaryRelation.TYPE_GREATER_THAN, seqidx-1, seqidx))
             i += 1
         return self
     
@@ -58,6 +110,9 @@ class SequenceConstraints(object):
                 return False
         for i in self._numforbidden:
             if seq[i] in self._numforbidden[i]:
+                return False
+        for rel in self._relations:
+            if not rel.test(seq):
                 return False
         return True
     
@@ -72,6 +127,9 @@ class SequenceConstraints(object):
 '''
 c = SequenceConstraints("(12)(14)(356)(24)(15)(356)")
 c.enumeratePermutations(6)
+
+c = SequenceConstraints("_|_|(~1)!7!(45)|(3456)!(~6)!_")
+c.enumeratePermutations(8)
 '''
 
 def countnoadjaciences(permlen):
