@@ -41,7 +41,8 @@ def setofsquares(mod):
 # elliptic curve y^2 = x^3 + Ax + B over
 # the ring Z_mod. Each solution is a pair
 # (x,y).
-def solveEllipticCurve(A, B, mod, defaultdict = defaultdict):
+def solveEllipticCurve(A, B, mod):
+    from collections import defaultdict
     # build a map of each square element to its roots
     sqrroots = defaultdict(list)
     for i in xrange(mod):
