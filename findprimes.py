@@ -295,3 +295,16 @@ def Cunningham1(n, nth):
 def Cunningham2(n, nth):
     return 2*nth - 1
 
+# Returns p^2+p+1 which is the sum of divisors of p^2 if p is prime.
+def divsump2(n, p):
+    return p**2+p+1
+
+# There are no prime chains for the sum of divisors of any p^n if p is prime and n is odd because all such sums are even.
+def divsump3(n, p):
+    return p**3+p**2+p+1
+
+# Returns a function that returns p^k + p^(k-1) ... + p^2 + p + 1 which is the sum of divisors of p^k if p is prime.
+def makedivsumpk(k):
+    def divsumpk(n, p):
+        return (p**(k+1)-1)/(p-1)
+    return divsumpk

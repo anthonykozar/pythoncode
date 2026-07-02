@@ -7,7 +7,49 @@
 # Sept. 15 & 19-21, 2024
 
 def divisors(num):
-    return [1] + [n for n in xrange(2, num/2+1) if num % n == 0] + [num]
+    if num == 1: return [1]
+    elif num > 1:
+        return [1] + [n for n in xrange(2, num/2+1) if num % n == 0] + [num]
+    else: raise ValueError(str(num))
+
+# Returns a list of powers a^n for n from 0 to maxn.
+def listofpowers(a, maxn):
+    pwrs = [1]
+    an = 1
+    for n in xrange(1, maxn+1):
+        an *= a
+        pwrs.append(an)
+    return pwrs
+
+# Returns a^maxn + a^(maxn-1) ... + a^2 + a + 1 which is the sum of divisors of a^k if a is prime.
+def sumofpowers(a, maxn):
+    if a == 1: return maxn+1
+    else:
+        return (a**(maxn+1)-1)/(a-1)
+
+
+# If the prime factorization of a number is known, there is a formula to find the sum of the number's divisors.
+# primefactors should be a list of (prime, power) pairs. E.g. 60 = [(2,2), (3,1), (5,1)]
+def sumdivsfromprimes(primefactors):
+    divsum = 1
+    for p,n in primefactors:
+        divsum *= sumofpowers(p,n)
+    return divsum
+
+# test sumdivsfromprimes()
+'''
+import itertools
+import operator as op
+it = itertools.product(xrange(6), repeat=6)
+for exps in it:
+    factors = zip([2,3,5,7,11,13], exps)
+    n = reduce(op.mul, ([p**e for p,e in factors]))
+    if n <= 1000000:
+        sum1 = sumdivsfromprimes(factors)
+        sum2 = sum(divisors(n))
+        if sum1 != sum2:
+            print exps, n, sum1, sum2
+'''
 
 # Returns None if no sublist exists that sums to targetsum.
 def findsublistwithsum(nums, targetsum):
