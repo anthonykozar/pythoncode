@@ -50,11 +50,11 @@ def printhailstoneseq(n, collfunc = collatz, maxnum = 10**12):
     else:
         print
 
-# Make a graph of an iterated function for inputs in range(a, b+1, step), optionally printing hailstone sequences until they reach a known part of the graph (or exceed maxnum).
+# Make a graph of an iterated function for inputs in range(a, b+1, step), optionally printing hailstone sequences until they reach a known part of the graph (or exceed +/-maxnum).
 def makegraph(a, b, step, collfunc, printhailstones = True, maxnum = 10**12):
     def extendgraph(n, graph):
         num = n
-        while not num in graph and num < maxnum:
+        while not num in graph and num < maxnum and num > -maxnum:
             if printhailstones:
                 print num, '->',
             fnum = collfunc(num)
@@ -144,6 +144,12 @@ def analyzegraph(graph):
                 notcyclic.append(m)
     return (cycles, classes)
 
+def classcounts(classes):
+    counts = [0]*3
+    for n in classes:
+        counts[classes[n][0]-1] += 1
+    return counts
+
 def cyclereport(cycles, classes, printleadinglists = True,  printdivergents = True, maxlistlen = 100, maxnum = 10**12):
     # workaround for bug in Pyonic
     partOfCycle = 1
@@ -156,9 +162,9 @@ def cyclereport(cycles, classes, printleadinglists = True,  printdivergents = Tr
         leadgbycyc = [list() for i in xrange(numcycles)]
         divergent = []
         for n in classes:
-            if classes[n][0] == leadsToCycle and printleadinglists and n <= maxnum:
+            if classes[n][0] == leadsToCycle and printleadinglists and n <= maxnum and n >= -maxnum:
                 leadgbycyc[classes[n][1]].append(n)
-            elif classes[n][0] == possiblyDivergent and printdivergents and n <= maxnum:
+            elif classes[n][0] == possiblyDivergent and printdivergents and n <= maxnum and n >= -maxnum:
                 divergent.append(n)
     
     # print each cycle beginning with its smallest value and print its list of leading numbers (if requested)
