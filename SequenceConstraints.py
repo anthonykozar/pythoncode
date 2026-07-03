@@ -20,6 +20,10 @@ class BinaryRelation(Constraint):
     TYPE_NOT_ADJACENT = 2
     TYPE_LESS_THAN = 3
     TYPE_GREATER_THAN = 4
+    TYPE_SUM = 5
+    TYPE_DIFFERENCE = 6
+    TYPE_PRODUCT = 7
+    TYPE_QUOTIENT = 8
     
     def __init__(self, ctype, idx1, idx2, result = None):
         self.type = ctype
@@ -40,6 +44,14 @@ class BinaryRelation(Constraint):
             return seq[self.idx1] < seq[self.idx2]
         elif self.type == self.TYPE_GREATER_THAN:
             return seq[self.idx1] > seq[self.idx2]
+        elif self.type == self.TYPE_SUM:
+            return seq[self.idx1] + seq[self.idx2] == self.result
+        elif self.type == self.TYPE_PRODUCT:
+            return seq[self.idx1] * seq[self.idx2] == self.result
+        elif self.type == self.TYPE_DIFFERENCE:
+            return (seq[self.idx1] - seq[self.idx2] == self.result) or (seq[self.idx2] - seq[self.idx1] == self.result)
+        elif self.type == self.TYPE_QUOTIENT:
+            return (divmod(seq[self.idx1], seq[self.idx2]) == (self.result, 0)) or (divmod(seq[self.idx2], seq[self.idx1]) == (self.result, 0))
         else:
             raise ValueError("Unknown constraint type %s in BinaryRelation object." % str(self.type))
 
@@ -103,6 +115,10 @@ class SequenceConstraints(Constraint):
                 self._relations.append(BinaryRelation(BinaryRelation.TYPE_GREATER_THAN, seqidx-1, seqidx))
             i += 1
         return self
+    
+    def addConstraint(self, constraint):
+        if isinstance(constraint, Constraint):
+            self._relations.append(constraint)
     
     def test(self, seq):
         for i in self._numoptions:
